@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AnimalHealth</string>
+    <string-array name="types_array">
+        <item>Veterinario</item>
+        <item>Cliente</item>
+    </string-array>
+</resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "494275522460",
+    "project_id": "animalhealth-1db78",
+    "storage_bucket": "animalhealth-1db78.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494275522460:android:1cc7cad6a55886a02a6259",
+        "android_client_info": {
+          "package_name": "com.example.animalhealth"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvqMs59mZSPACrbxZEcvO1W8yQmRcRzsI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
