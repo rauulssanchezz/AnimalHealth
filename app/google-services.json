@@ -1,26 +1,74 @@
 {
   "project_info": {
-    "project_number": "494275522460",
-    "project_id": "animalhealth-1db78",
-    "storage_bucket": "animalhealth-1db78.appspot.com"
+    "project_number": "718687554183",
+    "firebase_url": "https://practicafinal-cda29-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "practicafinal-cda29",
+    "storage_bucket": "practicafinal-cda29.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:494275522460:android:1cc7cad6a55886a02a6259",
+        "mobilesdk_app_id": "1:718687554183:android:8d36eacdccd5242069c622",
         "android_client_info": {
           "package_name": "com.example.animalhealth"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "718687554183-ihfsjibl0sr6955i2sqtivl800srbm7r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.animalhealth",
+            "certificate_hash": "bf7f1977adc8846716a707bbc849c9c167f84f30"
+          }
+        },
+        {
+          "client_id": "718687554183-orbeijbl4omqtq9agbde02q3jr1d8g1m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDvqMs59mZSPACrbxZEcvO1W8yQmRcRzsI"
+          "current_key": "AIzaSyCmALf2y1QcgYdAQIjIRqVtgMkx3tQ_js8"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "718687554183-orbeijbl4omqtq9agbde02q3jr1d8g1m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718687554183:android:a899b446fbe8e00c69c622",
+        "android_client_info": {
+          "package_name": "com.example.practicafinal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "718687554183-orbeijbl4omqtq9agbde02q3jr1d8g1m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmALf2y1QcgYdAQIjIRqVtgMkx3tQ_js8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "718687554183-orbeijbl4omqtq9agbde02q3jr1d8g1m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

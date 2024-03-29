@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
@@ -14,6 +15,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.example.animalhealth.R
 import com.example.animalhealth.clases.Utilities
 import com.google.android.material.textfield.TextInputEditText
@@ -42,6 +45,7 @@ class RegisterFragment : Fragment() {
     private lateinit var nameEdit: TextInputEditText
     private lateinit var register: Button
     private lateinit var job: Job
+    private lateinit var navController: NavController
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -57,9 +61,14 @@ class RegisterFragment : Fragment() {
         nameEdit = view.findViewById<TextInputEditText>(R.id.editTextName)
         register = view.findViewById<Button>(R.id.buttonRegister)
         job= Job()
+        navController = findNavController()
 
         val textView = view.findViewById<TextView>(R.id.textViewRegisterOrLoginWith)
         textView.paintFlags = textView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
+        textView.setOnClickListener {
+            navController.navigate(R.id.action_registerFragment_to_loginFragment)
+        }
 
         val spinner: Spinner = view.findViewById(R.id.type_spinner)
 // Create an ArrayAdapter using the string array and a default spinner layout.
@@ -74,7 +83,15 @@ class RegisterFragment : Fragment() {
             spinner.adapter = adapter
         }
 
-        type= spinner.selectedItem.toString()
+        spinner.onItemSelectedListener= object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                type= spinner.selectedItem.toString()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                type=""
+            }
+        }
 
         photo.setOnClickListener {
             galeryAcces.launch("image/*")
@@ -137,6 +154,7 @@ class RegisterFragment : Fragment() {
                                             }
                                         }
                                         Toast.makeText(requireActivity(), "Usuario registrado", Toast.LENGTH_SHORT).show()
+                                        navController.navigate(R.id.action_registerFragment_to_loginFragment)
                                     } else {
                                         Toast.makeText(requireActivity(), "Error en el registro", Toast.LENGTH_SHORT).show()
                                     }

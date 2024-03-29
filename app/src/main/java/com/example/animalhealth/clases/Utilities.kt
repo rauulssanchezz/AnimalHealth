@@ -10,10 +10,10 @@ import kotlinx.coroutines.tasks.await
 class Utilities {
 
     companion object{
-        fun createUser(email:String,password:String,name:String,img:String,type:String){
+        suspend fun createUser(email:String,password:String,name:String,img:String,type:String){
             var dtb_ref= FirebaseDatabase.getInstance().reference
             val user=User(FirebaseAuth.getInstance().currentUser!!.uid,name, email, password,type,img)
-            dtb_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).setValue(user)
+            dtb_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).setValue(user).await()
         }
 
         suspend fun savePhoto(image:Uri):String{
