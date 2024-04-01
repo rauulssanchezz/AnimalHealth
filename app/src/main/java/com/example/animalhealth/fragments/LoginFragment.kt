@@ -1,5 +1,6 @@
 package com.example.animalhealth.fragments
 
+import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.animalhealth.VetMainActivity
 import com.example.animalhealth.R
 import com.google.android.gms.common.SignInButton
 import com.google.firebase.auth.FirebaseAuth
@@ -23,7 +25,8 @@ class LoginFragment : Fragment(){
 
         if (FirebaseAuth.getInstance().currentUser != null) {
             val navController = findNavController()
-            navController.navigate(R.id.action_loginFragment_to_mainFragment)
+            val newIntent = Intent(requireActivity(),VetMainActivity::class.java)
+            startActivity(newIntent)
         }
 
         val buttonLogin=view.findViewById<TextView>(R.id.buttonLogin)
@@ -55,9 +58,8 @@ class LoginFragment : Fragment(){
                 val auth = FirebaseAuth.getInstance()
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        val user = auth.currentUser
-                        val navController = findNavController()
-                        navController.navigate(R.id.action_loginFragment_to_mainFragment)
+                        val newIntent = Intent(requireActivity(),VetMainActivity::class.java)
+                        startActivity(newIntent)
                     } else {
                         // Si el inicio de sesión falla, muestra un mensaje de error
                         Toast.makeText(context, "Error al iniciar sesión", Toast.LENGTH_SHORT)

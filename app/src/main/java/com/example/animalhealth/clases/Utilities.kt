@@ -2,10 +2,13 @@ package com.example.animalhealth.clases
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
+import java.lang.Exception
 
 class Utilities {
 
@@ -24,6 +27,18 @@ class Utilities {
 
             return url_photo_firebase.toString()
 
+        }
+
+        suspend fun obtainUser(db_ref:DatabaseReference):User{
+            var user : User?=null
+            try {
+                val dataSnapshot = db_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).get().await()
+                user = dataSnapshot.getValue(User::class.java)
+            } catch (e: Exception){
+
+            }
+
+            return user!!
         }
     }
 
