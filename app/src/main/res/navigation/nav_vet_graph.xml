@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_vet_graph"
-    app:startDestination="@id/vetMainFragment">
+    app:startDestination="@id/vetBookingFragment">
 
     <fragment
-        android:id="@+id/vetMainFragment"
-        android:name="com.example.animalhealth.fragments.VetMainFragment"
-        android:label="fragment_vetMain"
-        tools:layout="@layout/fragment_vet_main" />
+        android:id="@+id/vetBookingFragment"
+        android:name="com.example.animalhealth.fragments.vet.VetBookingFragment"
+        android:label="fragment_vetBooking"
+        tools:layout="@layout/fragment_vet_booking" />
 
 </navigation>

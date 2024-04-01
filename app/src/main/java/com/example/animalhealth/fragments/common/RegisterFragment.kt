@@ -1,4 +1,4 @@
-package com.example.animalhealth.fragments
+package com.example.animalhealth.fragments.common
 
 import android.graphics.Paint
 import android.net.Uri
@@ -20,20 +20,16 @@ import androidx.navigation.fragment.findNavController
 import com.example.animalhealth.R
 import com.example.animalhealth.clases.Utilities
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
 class RegisterFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private var user: FirebaseUser?=null
-    private lateinit var photo:ImageView
+    private lateinit var photo: ImageView
     private var url_photo: Uri? = null
     private var email:String=""
     private var password:String=""
@@ -83,7 +79,7 @@ class RegisterFragment : Fragment() {
             spinner.adapter = adapter
         }
 
-        spinner.onItemSelectedListener= object : AdapterView.OnItemSelectedListener{
+        spinner.onItemSelectedListener= object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 type= spinner.selectedItem.toString()
             }
@@ -153,10 +149,18 @@ class RegisterFragment : Fragment() {
                                                 )
                                             }
                                         }
-                                        Toast.makeText(requireActivity(), "Usuario registrado", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            requireActivity(),
+                                            "Usuario registrado",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                         navController.navigate(R.id.action_registerFragment_to_loginFragment)
                                     } else {
-                                        Toast.makeText(requireActivity(), "Error en el registro", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            requireActivity(),
+                                            "Error en el registro",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
                         } else {
@@ -184,7 +188,11 @@ class RegisterFragment : Fragment() {
                     // Campo obligatorio
                 }
                 if (type == "") {
-                    Toast.makeText(requireActivity(), "Seleccione un tipo de usuario", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireActivity(),
+                        "Seleccione un tipo de usuario",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     // Seleccione un tipo de usuario
                 }
                 // Todos los campos son obligatorios

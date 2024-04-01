@@ -1,6 +1,7 @@
 package com.example.animalhealth.clases
 
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
@@ -31,9 +32,12 @@ class Utilities {
 
         suspend fun obtainUser(db_ref:DatabaseReference):User{
             var user : User?=null
+            Log.d("userID",FirebaseAuth.getInstance().currentUser!!.uid)
             try {
                 val dataSnapshot = db_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).get().await()
+                Log.d("dataSnapShot",dataSnapshot.toString())
                 user = dataSnapshot.getValue(User::class.java)
+                Log.d("pito",user.toString())
             } catch (e: Exception){
 
             }

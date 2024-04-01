@@ -1,4 +1,4 @@
-package com.example.animalhealth.fragments
+package com.example.animalhealth.fragments.common
 
 import android.content.Intent
 import android.graphics.Paint
@@ -10,8 +10,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.animalhealth.VetMainActivity
 import com.example.animalhealth.R
+import com.example.animalhealth.activities.VetMainActivity
 import com.google.android.gms.common.SignInButton
 import com.google.firebase.auth.FirebaseAuth
 
@@ -22,11 +22,9 @@ class LoginFragment : Fragment(){
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_login, container, false)
-
+        val navController = findNavController()
         if (FirebaseAuth.getInstance().currentUser != null) {
-            val navController = findNavController()
-            val newIntent = Intent(requireActivity(),VetMainActivity::class.java)
-            startActivity(newIntent)
+            navController.navigate(R.id.action_loginFragment_to_loadingFragment)
         }
 
         val buttonLogin=view.findViewById<TextView>(R.id.buttonLogin)
@@ -58,8 +56,7 @@ class LoginFragment : Fragment(){
                 val auth = FirebaseAuth.getInstance()
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        val newIntent = Intent(requireActivity(),VetMainActivity::class.java)
-                        startActivity(newIntent)
+                        navController.navigate(R.id.action_loginFragment_to_loadingFragment)
                     } else {
                         // Si el inicio de sesión falla, muestra un mensaje de error
                         Toast.makeText(context, "Error al iniciar sesión", Toast.LENGTH_SHORT)

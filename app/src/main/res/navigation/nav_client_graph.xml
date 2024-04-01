@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_client_graph"
+    app:startDestination="@id/clientClinicsFragment">
+    <fragment
+        android:id="@+id/clientClinicsFragment"
+        android:name="com.example.animalhealth.fragments.client.ClientClinicsFragment"
+        android:label="fragment_clientClinics"
+        tools:layout="@layout/fragment_client_clinics" />
+
+    <fragment
+        android:id="@+id/clientPetFragment"
+        android:name="com.example.animalhealth.fragments.client.ClientPetFragment"
+        android:label="fragment_clientPet"
+        tools:layout="@layout/fragment_client_pet" />
+</navigation>
