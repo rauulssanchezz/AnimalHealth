@@ -12,9 +12,7 @@ import com.example.animalhealth.activities.ClientMainActivity
 import com.example.animalhealth.activities.VetMainActivity
 import com.example.animalhealth.clases.User
 import com.example.animalhealth.clases.Utilities
-import com.google.firebase.Firebase
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.database
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

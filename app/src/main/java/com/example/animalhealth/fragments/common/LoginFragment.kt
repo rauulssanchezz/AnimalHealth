@@ -14,6 +14,7 @@ import com.example.animalhealth.R
 import com.example.animalhealth.activities.VetMainActivity
 import com.google.android.gms.common.SignInButton
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 class LoginFragment : Fragment(){
     override fun onCreateView(
@@ -36,6 +37,7 @@ class LoginFragment : Fragment(){
 
         var email=""
         var password=""
+        var user:FirebaseUser?=null
 
         val textView = view.findViewById<TextView>(R.id.textViewRegisterOrLoginWith)
         textView.paintFlags = textView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
@@ -56,6 +58,7 @@ class LoginFragment : Fragment(){
                 val auth = FirebaseAuth.getInstance()
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
+                        user=auth.currentUser
                         navController.navigate(R.id.action_loginFragment_to_loadingFragment)
                     } else {
                         // Si el inicio de sesión falla, muestra un mensaje de error

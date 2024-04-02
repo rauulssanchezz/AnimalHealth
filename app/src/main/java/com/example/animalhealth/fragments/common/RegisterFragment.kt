@@ -28,7 +28,6 @@ import kotlinx.coroutines.launch
 
 class RegisterFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
-    private var user: FirebaseUser?=null
     private lateinit var photo: ImageView
     private var url_photo: Uri? = null
     private var email:String=""
@@ -128,7 +127,6 @@ class RegisterFragment : Fragment() {
                             auth.createUserWithEmailAndPassword(email, password)
                                 .addOnCompleteListener(requireActivity()) { task ->
                                     if (task.isSuccessful) {
-                                        user = auth.currentUser
                                         GlobalScope.launch {
                                             if (url_photo != null) {
                                                 val url_img = Utilities.savePhoto(url_photo!!)
