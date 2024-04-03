@@ -19,10 +19,14 @@ class Utilities {
             dtb_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).setValue(user).await()
         }
 
-        suspend fun savePhoto(image:Uri):String{
+        suspend fun createPet(pet:Pet,db_ref:DatabaseReference){
+            db_ref.child("Pets").child(pet.ownerId).child(pet.id).setValue(pet).await()
+        }
+
+        suspend fun savePhoto(image:Uri,root:String,id:String):String{
             lateinit var url_photo_firebase: Uri
             var sto_ref: StorageReference = FirebaseStorage.getInstance().reference
-            url_photo_firebase = sto_ref.child("Users").child("photos").child(FirebaseAuth.getInstance().currentUser!!.uid)
+            url_photo_firebase = sto_ref.child(root).child("photos").child(id)
                 .putFile(image).await().storage.downloadUrl.await()
 
             return url_photo_firebase.toString()

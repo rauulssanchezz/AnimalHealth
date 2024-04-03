@@ -86,32 +86,12 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutOwner"
+        android:id="@+id/textInputLayoutIlness"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/textInputLayoutBreed"
         app:layout_constraintStart_toStartOf="@id/textInputLayoutName"
         app:layout_constraintEnd_toEndOf="@id/textInputLayoutName"
-        android:layout_marginTop="16dp"
-        style="@style/Widget.Design.TextInputLayout"
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextOwner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email Dueño"
-            android:inputType="textEmailAddress"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutIlness"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/textInputLayoutOwner"
-        app:layout_constraintStart_toStartOf="@id/textInputLayoutOwner"
-        app:layout_constraintEnd_toEndOf="@id/textInputLayoutOwner"
         android:layout_marginTop="16dp"
         android:scrollbars="vertical"
         style="@style/Widget.Design.TextInputLayout"
@@ -169,7 +149,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Edad"
-            android:inputType="number" />
+            android:inputType="numberDecimal" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -188,13 +168,13 @@
             android:id="@+id/editTextWeight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Raza"
+            android:hint="Peso"
             android:inputType="numberDecimal"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/buttonRegister"
+        android:id="@+id/buttonSave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="20dp"

@@ -129,7 +129,7 @@ class RegisterFragment : Fragment() {
                                     if (task.isSuccessful) {
                                         GlobalScope.launch {
                                             if (url_photo != null) {
-                                                val url_img = Utilities.savePhoto(url_photo!!)
+                                                val url_img = Utilities.savePhoto(url_photo!!,"Users",FirebaseAuth.getInstance().currentUser!!.uid)
                                                 Utilities.createUser(
                                                     email,
                                                     password,

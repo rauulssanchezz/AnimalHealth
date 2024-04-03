@@ -9,10 +9,10 @@ data class Pet (
     val name:String,
     val type:String,
     val breed:String,
-    val age:Int,
+    val age:String,
     val ilness:String,
     val vacunes:String,
-    val weight:Double,
+    val weight:String,
     val ownerId:String,
-    val photo:String
+    val photo:String = ""
 ):Parcelable
