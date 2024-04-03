@@ -13,7 +13,7 @@ class VetMainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_vet_main)
 
         val navHostFragment=
-            supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
+            supportFragmentManager.findFragmentById(R.id.vet_nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
         bottomNavigationView.setupWithNavController(navController)

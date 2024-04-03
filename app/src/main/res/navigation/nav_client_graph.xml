@@ -14,5 +14,23 @@
         android:id="@+id/clientPetFragment"
         android:name="com.example.animalhealth.fragments.client.ClientPetFragment"
         android:label="fragment_clientPet"
-        tools:layout="@layout/fragment_client_pet" />
+        tools:layout="@layout/fragment_client_pet"
+        >
+        <action
+            android:id="@+id/action_clientPetFragment_to_clientAddPetFragment"
+            app:destination="@id/clientAddPetFragment"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/clientAddPetFragment"
+        android:name="com.example.animalhealth.fragments.client.ClientAddPetFragment"
+        android:label="fragment_clientAddPet"
+        tools:layout="@layout/fragment_client_add_pet"
+        >
+        <action
+            android:id="@+id/action_clientAddPetFragment_to_clientPetFragment"
+            app:destination="@id/clientPetFragment"
+        />
+    </fragment>
 </navigation>

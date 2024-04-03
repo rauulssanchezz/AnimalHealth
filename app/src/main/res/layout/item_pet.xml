@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="300dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="1dp"
+    android:padding="20dp"
+    android:layout_marginHorizontal="15dp"
+    android:layout_marginVertical="15dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <ImageView
+            android:id="@+id/petPhoto"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/icons8_mascotas_60"
+            android:adjustViewBounds="true"
+            android:layout_marginVertical="15dp"
+            android:layout_marginHorizontal="15dp"
+            />
+        <TextView
+            android:id="@+id/petName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/petPhoto"
+            app:layout_constraintStart_toEndOf="@id/petPhoto"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="3dp"
+            android:text="Pet Name"
+            />
+        <TextView
+            android:id="@+id/petType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/petName"
+            app:layout_constraintStart_toEndOf="@id/petPhoto"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="12dp"
+            android:text="Pet Type"
+            />
+        <TextView
+            android:id="@+id/petBreed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/petType"
+            app:layout_constraintStart_toEndOf="@id/petPhoto"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="12dp"
+            android:text="Pet Breed"
+            />
+        <TextView
+            android:id="@+id/petAge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/petBreed"
+            app:layout_constraintStart_toEndOf="@id/petPhoto"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="12dp"
+            android:text="Pet Age"
+            />
+        <TextView
+            android:id="@+id/petWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/petAge"
+            app:layout_constraintStart_toEndOf="@id/petPhoto"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="12dp"
+            android:text="Pet Weight"
+            />
+        <TextView
+            android:id="@+id/petIlness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/petPhoto"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="20dp"
+            android:text="Pet Ilness"
+            />
+        <TextView
+            android:id="@+id/petVacunes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/petPhoto"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="20dp"
+            android:text="Pet Vacunes"
+            />
+        <TextView
+            android:id="@+id/petOwner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="5dp"
+            android:text="Pet Owner"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

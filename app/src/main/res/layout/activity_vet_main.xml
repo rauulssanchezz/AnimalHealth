@@ -7,35 +7,56 @@
     android:layout_height="match_parent"
     tools:context=".activities.VetMainActivity">
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginVertical="10dp"
+                android:layout_marginHorizontal="10dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/logo_animal_health"
+                />
+            <TextView
+                android:id="@+id/logoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="ANIMALHEALTH"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp"
+                android:elegantTextHeight="true"
+                android:textStyle="bold"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/main_nav_host_fragment"
+        android:id="@+id/vet_nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_vet_graph"
+        android:layout_marginBottom="57dp"
+        android:layout_marginTop="50dp"
         />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/addClinic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_view"
-        android:layout_marginVertical="15dp"
-        android:layout_marginHorizontal="15dp"
-        android:backgroundTint="@color/colorPrimary"
-        app:cardCornerRadius="10dp"
-        >
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_add_circle_outline_24"
-            android:adjustViewBounds="true"
-            android:layout_marginVertical="5dp"
-            android:layout_marginHorizontal="5dp"
-            />
-    </androidx.cardview.widget.CardView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
