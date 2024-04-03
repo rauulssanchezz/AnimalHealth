@@ -27,26 +27,26 @@ class LoadingFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_loading, container, false)
 
         var db_ref = FirebaseDatabase.getInstance().reference
-        var user: User
+        var user: User?=null
         val sharedPreferences = requireContext().getSharedPreferences("sharedPreferences",
             Context.MODE_PRIVATE
         )
         CoroutineScope(Dispatchers.IO).launch {
             user = Utilities.obtainUser(db_ref)
             with(sharedPreferences.edit()){
-                putString("Name",user.name)
-                putString("Email",user.email)
-                putString("Password",user.password)
-                putString("Type",user.type)
-                putString("Img",user.img)
+                putString("Name",user?.name)
+                putString("Email",user?.email)
+                putString("Password",user?.password)
+                putString("Type",user?.type)
+                putString("Img",user?.img)
                 apply()
             }
             withContext(Dispatchers.Main) {
-                if (user.type.equals( "Veterinario",true)) {
-                    val intent = Intent(activity, VetMainActivity::class.java)
+                if (user?.type == ( "Veterinario")) {
+                    val intent = Intent(requireContext(), VetMainActivity::class.java)
                     startActivity(intent)
                 } else {
-                    val intent = Intent(activity, ClientMainActivity::class.java)
+                    val intent = Intent(requireContext(), ClientMainActivity::class.java)
                     startActivity(intent)
                 }
             }

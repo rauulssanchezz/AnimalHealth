@@ -14,7 +14,7 @@ class Utilities {
 
     companion object{
         suspend fun createUser(email:String,password:String,name:String,img:String,type:String){
-            var dtb_ref= FirebaseDatabase.getInstance().reference
+            val dtb_ref= FirebaseDatabase.getInstance().reference
             val user=User(FirebaseAuth.getInstance().currentUser!!.uid,name, email, password,type,img)
             dtb_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).setValue(user).await()
         }
@@ -29,18 +29,23 @@ class Utilities {
 
         }
 
-        suspend fun obtainUser(dtb_ref: DatabaseReference):User{
+        suspend fun obtainUser(dtb_ref: DatabaseReference):User?{
             var user:User?=null
             try {
                 Log.d("UserUid",FirebaseAuth.getInstance().currentUser!!.uid)
                 val dataSnapshot = dtb_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).get().await()
+                //Los datos se recogen bien en el datasanpshot
+                //en firebase crea automaticamente un atributo stability no se por que
+                // pero si lo borro sigue sin funcionar asi que no creo que tenga mucho que ver
                 Log.d("DataSnapShot",dataSnapshot.value.toString())
                 user = dataSnapshot.getValue(User::class.java)
-                Log.d("UserData",user.toString())
+                //Este log nunca aparece no se por que
+                Log.d("DatosUsuario",user.toString())
             } catch (e: Exception) {
                 // Manejar excepción
+                println(e.message)
             }
-            return user!!
+            return user
         }
     }
 

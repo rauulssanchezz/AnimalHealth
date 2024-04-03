@@ -44,5 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:menu="@menu/bottom_nav_vet_menu"
-        style="@style/Widget.Material3.BottomNavigationView"/>
+        android:background="?attr/colorSurface"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        style="@style/Widget.Design.BottomNavigationView"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
