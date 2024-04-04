@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-<item
-    android:id="@+id/vetMainFragment"
-    android:icon="@drawable/booking"
-    android:title="Bookings"
-    />
+    <item
+        android:id="@+id/vetMainFragment"
+        android:icon="@drawable/booking"
+        android:title="Citas"
+        />
+    <item
+        android:id="@+id/vetClinicFragment"
+        android:icon="@drawable/icons8_cl_nica_96"
+        android:title="Clinica"
+        />
 </menu>

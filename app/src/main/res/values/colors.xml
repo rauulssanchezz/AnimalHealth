@@ -5,4 +5,6 @@
     <color name="colorPrimary">#2196F3</color>
     <color name="colorAccent">#FF80CBC4</color>
     <color name="darkThemeColor">#333333</color>
+    <color name="gray">#EB1D1B1B</color>
+    <color name="yellow">#FFC107</color>
 </resources>

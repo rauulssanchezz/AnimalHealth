@@ -11,4 +11,31 @@
         android:label="fragment_vetBooking"
         tools:layout="@layout/fragment_vet_booking" />
 
+    <fragment
+        android:id="@+id/vetClinicFragment"
+        android:name="com.example.animalhealth.fragments.vet.VetClinicFragment"
+        android:label="fragment_vetClinic"
+        tools:layout="@layout/fragment_vet_clinic" >
+
+        <action
+            android:id="@+id/vetClinicFragment_to_vetAddClinicFragment"
+            app:destination="@+id/vetAddClinicFragment"
+            />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/vetAddClinicFragment"
+        android:name="com.example.animalhealth.fragments.vet.VetAddClinicFragment"
+        android:label="fragment_vetAddClinic"
+        tools:layout="@layout/fragment_vet_add_clinic"
+        >
+
+        <action
+            android:id="@+id/vetAddClinicFragment_to_vetClinicFragment"
+            app:destination="@id/vetClinicFragment"
+            />
+
+    </fragment>
+
 </navigation>

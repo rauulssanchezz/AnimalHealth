@@ -3,11 +3,11 @@
 <item
     android:id="@+id/clientClinicsFragment"
     android:icon="@drawable/icons8_search_48"
-    android:title="Clinics"
+    android:title="Clinicas"
     />
 <item
     android:id="@+id/clientPetFragment"
     android:icon="@drawable/icons8_mascotas_60"
-    android:title="Pet"
+    android:title="Mascotas"
     />
 </menu>
