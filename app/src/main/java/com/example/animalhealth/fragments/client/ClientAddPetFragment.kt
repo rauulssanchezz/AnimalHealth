@@ -87,7 +87,7 @@ class ClientAddPetFragment : Fragment() {
                 vacunes = vacunesEditText.text.toString().trim().capitalize()
                 age = ageEditText.text.toString().trim().capitalize()
                 weight = weightEditText.text.toString().trim().capitalize()
-                owner = FirebaseAuth.getInstance().currentUser!!.uid
+                owner = FirebaseAuth.getInstance().currentUser!!.uid.toString()
 
                 val generatedId:String? = db_ref.child("Pets").push().key
 

@@ -77,5 +77,6 @@
             app:layout_constraintStart_toStartOf="@id/textInputLayoutLocation"
             app:layout_constraintEnd_toEndOf="@id/textInputLayoutLocation"
             android:layout_marginTop="16dp"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

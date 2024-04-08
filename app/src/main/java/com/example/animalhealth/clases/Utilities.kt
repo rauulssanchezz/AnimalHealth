@@ -23,6 +23,10 @@ class Utilities {
             db_ref.child("Pets").child(pet.ownerId).child(pet.id).setValue(pet).await()
         }
 
+        suspend fun createClinic(clinic:Clinic,db_ref:DatabaseReference){
+            db_ref.child("Clinics").child(clinic.id).setValue(clinic).await()
+        }
+
         suspend fun savePhoto(image:Uri,root:String,id:String):String{
             lateinit var url_photo_firebase: Uri
             var sto_ref: StorageReference = FirebaseStorage.getInstance().reference
