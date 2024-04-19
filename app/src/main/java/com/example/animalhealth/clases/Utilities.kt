@@ -1,7 +1,12 @@
 package com.example.animalhealth.clases
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.example.animalhealth.R
+import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -54,6 +59,22 @@ class Utilities {
                 println(e.message)
             }
             return user
+        }
+
+        fun load_animation(contex: Context): CircularProgressDrawable {
+            val animation = CircularProgressDrawable(contex)
+            animation.strokeWidth = 5f
+            animation.centerRadius = 30f
+            animation.start()
+            return animation
+        }
+
+        val transition = DrawableTransitionOptions.withCrossFade(500)
+        fun glideOptions(contex: Context): RequestOptions {
+            val options = RequestOptions().placeholder(load_animation(contex))
+                .fallback(R.drawable.logo_animal_health)
+                .error(R.drawable.baseline_error_outline_24)
+            return options
         }
     }
 

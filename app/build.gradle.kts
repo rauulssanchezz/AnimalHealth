@@ -3,7 +3,6 @@ plugins {
     id ("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id ("kotlin-parcelize")
-    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -42,21 +41,6 @@ android {
         jvmTarget = "1.8"
     }
 
-    secrets {
-        // Optionally specify a different file name containing your secrets.
-        // The plugin defaults to "local.properties"
-        propertiesFileName = "secrets.properties"
-
-        // A properties file containing default secret values. This file can be
-        // checked in version control.
-        defaultPropertiesFileName = "local.defaults.properties"
-
-        // Configure which keys should be ignored by the plugin by providing regular expressions.
-        // "sdk.dir" is ignored by default.
-        ignoreList.add("keyToIgnore") // Ignore the key "keyToIgnore"
-        ignoreList.add("sdk.*")       // Ignore all keys matching the regexp "sdk.*"
-    }
-
 }
 
 dependencies {
@@ -67,8 +51,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation ("com.firebaseui:firebase-ui-auth:7.2.0")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
-    implementation ("com.google.android.gms:play-services-maps:18.0.0")
-    implementation ("com.google.android.gms:play-services-location:19.0.0")
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -78,6 +61,7 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.database.ktx)
     implementation(libs.firebase.storage.ktx)
+    implementation(libs.androidx.swiperefreshlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

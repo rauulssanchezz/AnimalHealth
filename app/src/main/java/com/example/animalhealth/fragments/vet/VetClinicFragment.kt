@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import androidx.cardview.widget.CardView
 import androidx.navigation.fragment.findNavController
 import com.example.animalhealth.R
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class VetClinicFragment : Fragment() {
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
