@@ -15,6 +15,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.animalhealth.R
 import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.Utilities
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
@@ -77,11 +79,11 @@ class VetAddClinicFragment : Fragment() {
                             if (urlPhoto!=null) {
                                 val urlPhotoFb = Utilities.savePhoto(urlPhoto!!, "Clinics", clinicId!!)
                                 val clinic =
-                                    Clinic(clinicId!!, name, "0", location, latitude, longitude, urlPhotoFb)
+                                    Clinic(clinicId!!, name, "0", location, latitude, longitude,Firebase.auth.currentUser!!.uid, urlPhotoFb)
                                 Utilities.createClinic(clinic, dbRef)
                             }else{
                                 val clinic =
-                                    Clinic(clinicId!!, name, "0", location, latitude, longitude)
+                                    Clinic(clinicId!!, name, "0", location, latitude, longitude,Firebase.auth.currentUser!!.uid)
                                 Utilities.createClinic(clinic, dbRef)
                             }
 

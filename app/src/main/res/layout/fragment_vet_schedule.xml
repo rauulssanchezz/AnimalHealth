@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.vet.VetScheduleFragment"
+    android:padding="15dp">
+
+    <CheckBox
+        android:id="@+id/mondayCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Lunes"
+        />
+
+    <CheckBox
+        android:id="@+id/tuesdayCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/mondayCheckBox"
+        app:layout_constraintStart_toStartOf="@id/mondayCheckBox"
+        android:text="Martes"
+        />
+
+    <CheckBox
+        android:id="@+id/wednesdayCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tuesdayCheckBox"
+        app:layout_constraintStart_toStartOf="@id/tuesdayCheckBox"
+        android:text="Miércoles"
+        />
+
+    <CheckBox
+        android:id="@+id/thursdayCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/wednesdayCheckBox"
+        app:layout_constraintStart_toStartOf="@id/wednesdayCheckBox"
+        android:text="Jueves"
+        />
+
+    <CheckBox
+        android:id="@+id/fridayCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/thursdayCheckBox"
+        app:layout_constraintStart_toStartOf="@id/thursdayCheckBox"
+        android:text="Viernes"
+        />
+
+    <CheckBox
+        android:id="@+id/saturdayCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/fridayCheckBox"
+        app:layout_constraintStart_toStartOf="@id/fridayCheckBox"
+        android:text="Sábado"
+        />
+
+    <CheckBox
+        android:id="@+id/sundayCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/saturdayCheckBox"
+        app:layout_constraintStart_toStartOf="@id/saturdayCheckBox"
+        android:text="Domingo"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/startTimeSpinner"
+        app:layout_constraintStart_toStartOf="@id/startTimeSpinner"
+        app:layout_constraintEnd_toEndOf="@id/startTimeSpinner"
+        android:text="Hora Inicio"
+        />
+
+    <Spinner
+        android:id="@+id/startTimeSpinner"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/sundayCheckBox"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/endTimeSpinner"
+        android:layout_marginTop="50dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/endTimeSpinner"
+        app:layout_constraintStart_toStartOf="@id/endTimeSpinner"
+        app:layout_constraintEnd_toEndOf="@id/endTimeSpinner"
+        android:text="Hora Inicio"
+        />
+
+    <Spinner
+        android:id="@+id/endTimeSpinner"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/sundayCheckBox"
+        app:layout_constraintStart_toEndOf="@id/startTimeSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="50dp"
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/timeSlotTextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/startTimeSpinner"
+        app:layout_constraintStart_toStartOf="@id/saveScheduleButton"
+        app:layout_constraintEnd_toEndOf="@id/saveScheduleButton"
+        android:layout_marginVertical="20dp"
+        android:hint="Duración de la cita"
+        style="@style/Widget.Design.TextInputLayout"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/timeSlotEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="time"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/saveScheduleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:padding="20dp"
+        android:text="GUADAR HORARIO"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

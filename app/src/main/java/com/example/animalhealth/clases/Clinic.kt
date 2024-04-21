@@ -11,5 +11,6 @@ data class Clinic (
     var location : String = "",
     var latitude: Double = 0.0,
     var longitude: Double = 0.0,
+    var vetId : String = "",
     var photo : String = ""
 ):Parcelable

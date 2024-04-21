@@ -10,4 +10,10 @@
         android:icon="@drawable/icons8_cl_nica_96"
         android:title="Clinica"
         />
+
+    <item
+        android:id="@+id/vetScheduleFragment"
+        android:icon="@drawable/baseline_access_time_24"
+        android:title="Horario"
+        />
 </menu>

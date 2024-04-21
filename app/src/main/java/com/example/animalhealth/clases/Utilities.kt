@@ -61,6 +61,10 @@ class Utilities {
             return user
         }
 
+        suspend fun saveSchedule(schedule:Schedule,db_ref:DatabaseReference){
+            db_ref.child("Schedules").child(schedule.clinicId).child(schedule.id).setValue(schedule).await()
+        }
+
         fun load_animation(contex: Context): CircularProgressDrawable {
             val animation = CircularProgressDrawable(contex)
             animation.strokeWidth = 5f
