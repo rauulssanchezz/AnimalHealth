@@ -1,9 +1,11 @@
 package com.example.animalhealth.adapters
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Filter
 import android.widget.ImageView
 import android.widget.RatingBar
@@ -14,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.animalhealth.R
 import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.Utilities
+import com.example.animalhealth.fragments.client.ClientClinicInfoFragment
 
 
 class ClinicAdapter(private val clinics:MutableList<Clinic>, private val navController: NavController): RecyclerView.Adapter<ClinicAdapter.ClinicViewHolder>(){
@@ -24,7 +27,7 @@ class ClinicAdapter(private val clinics:MutableList<Clinic>, private val navCont
         val photo = item.findViewById<ImageView>(R.id.clinicPhoto)
         val name = item.findViewById<TextView>(R.id.clinicName)
         val address = item.findViewById<TextView>(R.id.clinicLocation)
-        val rate = item.findViewById<RatingBar>(R.id.clinicRate)
+        val rate = item.findViewById<TextView>(R.id.clinicRate)
 
     }
     override fun onCreateViewHolder(
@@ -39,7 +42,7 @@ class ClinicAdapter(private val clinics:MutableList<Clinic>, private val navCont
         val actual_item=filter_list[position]
         holder.name.text=actual_item.name
         holder.address.text=actual_item.location
-        holder.rate.progress=actual_item.rate.toInt()
+        holder.rate.text=actual_item.rate.toDouble().toString()
 
         val URL:String? = when (actual_item.photo){
             ""->null
@@ -48,7 +51,21 @@ class ClinicAdapter(private val clinics:MutableList<Clinic>, private val navCont
         Glide.with(context).load(URL).apply(Utilities.glideOptions(context)).transition(Utilities.transition).into(holder.photo)
 
         holder.itemView.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putParcelable("clinic", actual_item)
+            val fragment = ClientClinicInfoFragment()
+            fragment.arguments = bundle
+
             navController.navigate(R.id.action_clientClinicsFragment_to_clientClinicInfoFragment)
+        }
+
+        holder.itemView.findViewById<Button>(R.id.reserveButton).setOnClickListener {
+            val bundle = Bundle()
+            bundle.putParcelable("clinic", actual_item)
+            val fragment = ClientClinicInfoFragment()
+            fragment.arguments = bundle
+
+            navController.navigate(R.id.action_clientClinicsFragment_to_clientBookingFragment)
         }
     }
 

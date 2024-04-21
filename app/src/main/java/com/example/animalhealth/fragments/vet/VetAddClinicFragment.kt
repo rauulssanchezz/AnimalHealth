@@ -31,7 +31,8 @@ class VetAddClinicFragment : Fragment() {
     private lateinit var job: Job
 
     private lateinit var nameEditText: EditText
-    private lateinit var locationEditText: EditText
+    private lateinit var streetEditText: EditText
+    private lateinit var postalCodeEditText: EditText
     private lateinit var buttonSave: Button
 
     private var name = ""
@@ -49,17 +50,18 @@ class VetAddClinicFragment : Fragment() {
 
         buttonSave = view.findViewById(R.id.buttonSave)
         nameEditText = view.findViewById(R.id.editTextName)
-        locationEditText = view.findViewById(R.id.editTextLocation)
+        streetEditText = view.findViewById(R.id.editTextStreet)
+        postalCodeEditText = view.findViewById(R.id.editTextPostalCode)
 
         buttonSave.setOnClickListener {
-            if (nameEditText.text.toString().isEmpty() || locationEditText.text.toString()
+            if (nameEditText.text.toString().isEmpty() || streetEditText.text.toString()
                     .isEmpty()
             ) {
                 nameEditText.setError("Campo obligatorio")
-                locationEditText.setError("Campo obligatorio")
+                streetEditText.setError("Campo obligatorio")
             } else {
                 name = nameEditText.text.toString()
-                location = locationEditText.text.toString()
+                location = streetEditText.text.toString() + " " + postalCodeEditText.text.toString()
                 val geocoder = Geocoder(requireContext(), Locale.getDefault())
                 try {
                     val addresses = geocoder.getFromLocationName(location, 1)
@@ -95,7 +97,8 @@ class VetAddClinicFragment : Fragment() {
                     }
 
                 } catch (e: Exception) {
-                    locationEditText.setError("Ubicación no encontrada")
+                    streetEditText.setError("Ubicación no encontrada")
+                    postalCodeEditText.setError("Ubicación no encontrada")
                 }
             }
         }

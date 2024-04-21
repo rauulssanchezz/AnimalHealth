@@ -44,7 +44,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayoutLocation"
+            android:id="@+id/textInputLayoutStreet"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/textInputLayoutName"
@@ -57,13 +57,35 @@
             >
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextLocation"
+                android:id="@+id/editTextStreet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Direccion"
                 android:inputType="textPostalAddress" />
-
         </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutPostalCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutStreet"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="32dp"
+            style="@style/Widget.Design.TextInputLayout"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextPostalCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Codigo Postal"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonSave"
@@ -73,9 +95,9 @@
             android:text="Guardar"
             android:textColor="@color/white"
             android:backgroundTint="@color/colorPrimary"
-            app:layout_constraintTop_toBottomOf="@id/textInputLayoutLocation"
-            app:layout_constraintStart_toStartOf="@id/textInputLayoutLocation"
-            app:layout_constraintEnd_toEndOf="@id/textInputLayoutLocation"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutPostalCode"
+            app:layout_constraintStart_toStartOf="@id/textInputLayoutPostalCode"
+            app:layout_constraintEnd_toEndOf="@id/textInputLayoutPostalCode"
             android:layout_marginTop="16dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

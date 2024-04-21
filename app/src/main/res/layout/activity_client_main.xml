@@ -67,10 +67,10 @@
         app:layout_constraintBottom_toTopOf="@id/client_bottom_navigation_view"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
         app:navGraph="@navigation/nav_client_graph"
-        android:layout_marginBottom="57dp"
         android:layout_marginTop="50dp"
+        android:layout_marginBottom="58dp"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
