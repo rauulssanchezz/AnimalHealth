@@ -8,7 +8,12 @@
         android:id="@+id/clientClinicsFragment"
         android:name="com.example.animalhealth.fragments.client.ClientClinicsFragment"
         android:label="fragment_clientClinics"
-        tools:layout="@layout/fragment_client_clinics" />
+        tools:layout="@layout/fragment_client_clinics" >
+        <action
+            android:id="@+id/action_clientClinicsFragment_to_clientClinicInfoFragment"
+            app:destination="@id/clientClinicInfoFragment"
+            />
+    </fragment>
 
     <fragment
         android:id="@+id/clientPetFragment"
@@ -32,5 +37,13 @@
             android:id="@+id/action_clientAddPetFragment_to_clientPetFragment"
             app:destination="@id/clientPetFragment"
         />
+    </fragment>
+
+    <fragment
+        android:id="@+id/clientClinicInfoFragment"
+        android:name="com.example.animalhealth.fragments.client.ClientClinicInfoFragment"
+        android:label="fragment_clientClinicInfo"
+        tools:layout="@layout/fragment_client_clinic_info"
+        >
     </fragment>
 </navigation>

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.animalhealth.R
@@ -48,7 +49,8 @@ class ClientClinicsFragment : Fragment() {
                 }
             })
 
-        adapter = ClinicAdapter(list)
+        val navController = findNavController()
+        adapter = ClinicAdapter(list,navController)
         recycler.adapter = adapter
         recycler.layoutManager = LinearLayoutManager(requireActivity())
 

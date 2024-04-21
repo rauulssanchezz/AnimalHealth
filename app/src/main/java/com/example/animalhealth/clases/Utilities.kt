@@ -72,7 +72,7 @@ class Utilities {
         val transition = DrawableTransitionOptions.withCrossFade(500)
         fun glideOptions(contex: Context): RequestOptions {
             val options = RequestOptions().placeholder(load_animation(contex))
-                .fallback(R.drawable.logo_animal_health)
+                .fallback(R.drawable.icons8_cl_nica_96)
                 .error(R.drawable.baseline_error_outline_24)
             return options
         }
