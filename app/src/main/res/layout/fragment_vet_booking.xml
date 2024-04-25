@@ -35,7 +35,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/vetBookingRecyclerView"
         app:layout_constraintTop_toBottomOf="@id/bookingCalendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

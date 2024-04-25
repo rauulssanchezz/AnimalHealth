@@ -10,6 +10,7 @@ data class Booking(
     var bookingReason:String = "",
     var date:String = "",
     var time:String = "",
+    var clinicId :String = "",
     var ownerId:String = "",
     var petId:String = "",
     var ownerPhoto:String = ""
