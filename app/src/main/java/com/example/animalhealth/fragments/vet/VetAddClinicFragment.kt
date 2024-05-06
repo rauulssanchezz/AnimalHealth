@@ -35,10 +35,12 @@ class VetAddClinicFragment : Fragment() {
     private lateinit var nameEditText: EditText
     private lateinit var streetEditText: EditText
     private lateinit var postalCodeEditText: EditText
+    private lateinit var phoneEditText : EditText
     private lateinit var buttonSave: Button
 
     private var name = ""
     private var location = ""
+    private var phone = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,15 +56,19 @@ class VetAddClinicFragment : Fragment() {
         nameEditText = view.findViewById(R.id.editTextName)
         streetEditText = view.findViewById(R.id.editTextStreet)
         postalCodeEditText = view.findViewById(R.id.editTextPostalCode)
+        phoneEditText = view.findViewById(R.id.editTextPhone)
 
         buttonSave.setOnClickListener {
             if (nameEditText.text.toString().isEmpty() || streetEditText.text.toString()
-                    .isEmpty()
+                    .isEmpty() || postalCodeEditText.text.toString().isEmpty() || phoneEditText.text.toString().isEmpty()
             ) {
                 nameEditText.setError("Campo obligatorio")
                 streetEditText.setError("Campo obligatorio")
+                postalCodeEditText.setError("Campo obligatorio")
+                phoneEditText.setError("Campo obligatorio")
             } else {
                 name = nameEditText.text.toString()
+                phone = phoneEditText.text.toString()
                 location = streetEditText.text.toString() + " " + postalCodeEditText.text.toString()
                 val geocoder = Geocoder(requireContext(), Locale.getDefault())
                 try {
@@ -79,11 +85,11 @@ class VetAddClinicFragment : Fragment() {
                             if (urlPhoto!=null) {
                                 val urlPhotoFb = Utilities.savePhoto(urlPhoto!!, "Clinics", clinicId!!)
                                 val clinic =
-                                    Clinic(clinicId!!, name, "0", location, latitude, longitude,Firebase.auth.currentUser!!.uid, urlPhotoFb)
+                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,Firebase.auth.currentUser!!.uid, urlPhotoFb,phone)
                                 Utilities.createClinic(clinic, dbRef)
                             }else{
                                 val clinic =
-                                    Clinic(clinicId!!, name, "0", location, latitude, longitude,Firebase.auth.currentUser!!.uid)
+                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,Firebase.auth.currentUser!!.uid,phone)
                                 Utilities.createClinic(clinic, dbRef)
                             }
 

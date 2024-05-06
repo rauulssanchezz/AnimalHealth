@@ -61,12 +61,12 @@ class Utilities {
             return user
         }
 
-        suspend fun saveSchedule(schedule:Schedule,db_ref:DatabaseReference){
-            db_ref.child("Schedules").child(schedule.clinicId).child(schedule.id).setValue(schedule).await()
-        }
-
         suspend fun saveBooking(booking:Booking,db_ref:DatabaseReference){
             db_ref.child("Bookings").child(booking.clinicId).child(booking.id).setValue(booking).await()
+        }
+
+        suspend fun saveReview(reviews: Reviews,db_ref:DatabaseReference){
+            db_ref.child("Reviews").child(reviews.clinicId!!).child(reviews.id!!).setValue(reviews).await()
         }
 
         fun load_animation(contex: Context): CircularProgressDrawable {

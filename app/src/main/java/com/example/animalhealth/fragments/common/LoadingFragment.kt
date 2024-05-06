@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.animalhealth.R
-import com.example.animalhealth.activities.ClientMainActivity
+import com.example.animalhealth.activities.client.ClientMainActivity
 import com.example.animalhealth.activities.VetMainActivity
 import com.example.animalhealth.clases.User
 import com.example.animalhealth.clases.Utilities

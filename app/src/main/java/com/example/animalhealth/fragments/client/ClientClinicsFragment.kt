@@ -49,8 +49,7 @@ class ClientClinicsFragment : Fragment() {
                 }
             })
 
-        val navController = findNavController()
-        adapter = ClinicAdapter(list,navController)
+        adapter = ClinicAdapter(list)
         recycler.adapter = adapter
         recycler.layoutManager = LinearLayoutManager(requireActivity())
 
