@@ -7,45 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".activities.client.ClientMainActivity">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/topBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        >
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
-            <ImageView
-                android:id="@+id/logo"
-                android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginVertical="10dp"
-                android:layout_marginHorizontal="10dp"
-                android:adjustViewBounds="true"
-                android:src="@drawable/logo_animal_health"
-                />
-            <TextView
-                android:id="@+id/logoText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:text="ANIMALHEALTH"
-                android:textColor="@color/colorPrimary"
-                android:textSize="20sp"
-                android:elegantTextHeight="true"
-                android:textStyle="bold"
-                />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/client_bottom_navigation_view"
@@ -67,9 +29,8 @@
         app:layout_constraintBottom_toTopOf="@id/client_bottom_navigation_view"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/nav_client_graph"
-        android:layout_marginTop="50dp"
         android:layout_marginBottom="58dp"
         />
 

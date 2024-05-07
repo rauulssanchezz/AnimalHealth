@@ -41,6 +41,7 @@
             android:scaleY="0.5"
             android:scaleX="0.5"
             android:isIndicator="true"
+            android:progressTint="@color/yellow"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

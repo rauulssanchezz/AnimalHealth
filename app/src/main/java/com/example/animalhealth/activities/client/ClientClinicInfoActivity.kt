@@ -12,6 +12,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.animalhealth.R
 import com.example.animalhealth.adapters.ClinicAdapter
 import com.example.animalhealth.adapters.ReviewsAdapter
@@ -40,6 +41,7 @@ class ClientClinicInfoActivity : AppCompatActivity() {
         val address = findViewById<TextView>(R.id.clinicAddress)
         val rate = findViewById<RatingBar>(R.id.clinicRate)
         val phone = findViewById<TextView>(R.id.clinicPhone)
+        val photo = findViewById<ImageView>(R.id.clinicImage)
         val reviewsButton = findViewById<TextView>(R.id.reviewButton)
         val reviewCardView = findViewById<CardView>(R.id.writeReviewCard)
         val saveReview = findViewById<TextView>(R.id.saveReview)
@@ -47,23 +49,43 @@ class ClientClinicInfoActivity : AppCompatActivity() {
         var recycler = findViewById<RecyclerView>(R.id.reviewsRecyclerView)
         var adapter: ReviewsAdapter
 
-        name.text = clinic?.name
-        address.text = clinic?.location
-        phone.text = clinic?.phone
-        rate.rating = clinic?.rate!!
 
-        var countReview = 0
-        var mediaReviews = 0.0f
+        val URL: String? = when (clinic!!.photo) {
+            "" -> null
+            else -> clinic.photo
+        }
 
-        list.clear()
-        dbRef.child("Reviews")
+        Glide.with(applicationContext).load(URL).apply(Utilities.glideOptions(applicationContext))
+            .transition(Utilities.transition).into(photo)
+
+        name.text = clinic.name
+        address.text = clinic.location
+        phone.text = clinic.phone
+
+
+
+
+        dbRef.child("Reviews").child(clinic.id!!)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    var countReview = 0
+                    var mediaReviews = 0.0f
+                    list.clear()
                     snapshot.children.forEach { hijo: DataSnapshot? ->
                         val pojo_review = hijo?.getValue(Reviews::class.java)
                         list.add(pojo_review!!)
+                        Log.d("Review", pojo_review.rate.toString())
                         countReview++
                         mediaReviews += pojo_review.rate!!
+                        Log.d("Review double", pojo_review.rate!!.toDouble().toString())
+                        Log.d("Media", mediaReviews.toString())
+                    }
+                    if (countReview != 0) {
+                        mediaReviews /= countReview
+                        clinic.rate = mediaReviews
+                        GlobalScope.launch {
+                            Utilities.createClinic(clinic, dbRef)
+                        }
                     }
                     recycler.adapter?.notifyDataSetChanged()
                 }
@@ -76,12 +98,10 @@ class ClientClinicInfoActivity : AppCompatActivity() {
         adapter = ReviewsAdapter(list)
         recycler.adapter = adapter
         recycler.layoutManager = LinearLayoutManager(applicationContext)
-        recycler.setHasFixedSize(true)
-        rate.rating = mediaReviews
 
-        mediaReviews /= countReview
 
-        clinic?.rate = mediaReviews
+        rate.rating = clinic.rate
+        Log.d("ClinicRate", rate.rating.toString())
 
         backButton.setOnClickListener {
             onBackPressed()
@@ -97,14 +117,6 @@ class ClientClinicInfoActivity : AppCompatActivity() {
             var userImg = ""
             var userName = ""
             var id = ""
-            reviewRate.onRatingBarChangeListener = RatingBar.OnRatingBarChangeListener { ratingBar, rating, fromUser ->
-                id = dbRef.push().key!!
-                var sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE)
-                userName = sharedPreferences.getString("Name","")!!
-                userImg = sharedPreferences.getString("Img","")!!
-
-            }
-
             saveReview.setOnClickListener {
                 Log.d("Guardar", "Guardando valoración")
                 if (reviewRate.rating == 0.0f) {
@@ -115,6 +127,10 @@ class ClientClinicInfoActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
+                    id = dbRef.push().key!!
+                    var sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE)
+                    userName = sharedPreferences.getString("Name","")!!
+                    userImg = sharedPreferences.getString("Img","")!!
                     Log.d("Guardar", "Guardando valoración correctamente")
                     review = Reviews(
                         id,

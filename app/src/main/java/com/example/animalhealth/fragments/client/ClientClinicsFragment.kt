@@ -1,16 +1,24 @@
 package com.example.animalhealth.fragments.client
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.PopupMenu
+import android.widget.SearchView
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.animalhealth.R
 import com.example.animalhealth.adapters.ClinicAdapter
 import com.example.animalhealth.clases.Clinic
+import com.example.animalhealth.clases.Utilities
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -22,6 +30,10 @@ class ClientClinicsFragment : Fragment() {
     private lateinit var list : MutableList<Clinic>
     private lateinit var recycler : RecyclerView
     private lateinit var adapter : ClinicAdapter
+    private lateinit var filters : ImageView
+    private lateinit var search : SearchView
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var newList : MutableList<Clinic>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,7 +43,88 @@ class ClientClinicsFragment : Fragment() {
         dbRef = FirebaseDatabase.getInstance().reference
         list = mutableListOf<Clinic>()
         recycler = view.findViewById(R.id.clinicRecyclerView)
+        filters = view.findViewById(R.id.filters)
+        search = view.findViewById(R.id.searchView)
+        sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+        newList = mutableListOf()
 
+        obtainClinics()
+
+        adapter = ClinicAdapter(list)
+        recycler.adapter = adapter
+        recycler.layoutManager = LinearLayoutManager(requireActivity())
+
+        search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.filter.filter(newText)
+                return true
+            }
+        })
+
+        filters.setOnClickListener {
+            obtainClinics()
+            val popupMenu = PopupMenu(requireContext(), it)
+
+            popupMenu.inflate(R.menu.client_clinics_filters_menu)
+
+            popupMenu.setOnMenuItemClickListener { item ->
+                when(item.itemId) {
+                    R.id.name -> {
+                        list.sortBy { it.name }
+                        adapter.notifyDataSetChanged()
+                        true
+                    }
+                    R.id.ubication -> {
+                        val latitud = sharedPreferences.getString("latitud", "0.0")!!.toDouble()
+                        val longitud = sharedPreferences.getString("longitud", "0.0")!!.toDouble()
+                        Log.d("Latitud", latitud.toString())
+                        for (clinic in list) {
+                            val distancia = Utilities.calcularDistancia(latitud, longitud, clinic.latitude, clinic.longitude)
+                            if (distancia < 30) {
+                                newList.add(clinic)
+                            }
+                        }
+                        if (newList.isEmpty()) {
+                            Toast.makeText(requireContext(), "No hay clínicas cercanas", Toast.LENGTH_SHORT).show()
+                        }else{
+                            list.clear()
+                            list.addAll(newList)
+                            newList.clear()
+                            adapter.notifyDataSetChanged()
+                        }
+                        Log.d("Lista", newList.toString())
+                        true
+                    }
+                    R.id.reviews -> {
+                        list.sortBy { it.rate }
+                        adapter.notifyDataSetChanged()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            try {
+                val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+                fieldMPopup.isAccessible = true
+                val mPopup = fieldMPopup.get(popupMenu)
+                mPopup.javaClass
+                    .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
+                    .invoke(mPopup, true)
+            } catch (e: Exception) {
+                Log.e("Main", "Error showing menu icons.", e)
+            } finally {
+                popupMenu.show()
+            }
+        }
+
+        return view
+    }
+
+    private fun obtainClinics(){
         dbRef.child("Clinics")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -48,11 +141,5 @@ class ClientClinicsFragment : Fragment() {
                     println(error.message)
                 }
             })
-
-        adapter = ClinicAdapter(list)
-        recycler.adapter = adapter
-        recycler.layoutManager = LinearLayoutManager(requireActivity())
-
-        return view
     }
 }

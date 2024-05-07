@@ -69,34 +69,17 @@
             android:layout_marginHorizontal="15dp"
             />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewClinicRate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginVertical="10dp"
-            android:layout_marginHorizontal="15dp"
-            android:backgroundTint="@color/colorPrimary"
-            app:cardCornerRadius="10dp"
-            >
-            <TextView
+            <RatingBar
                 android:id="@+id/clinicRate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0.0"
-                android:backgroundTint="@color/colorPrimary"
-                android:textColor="@color/white"
-                android:padding="20dp"
+                app:layout_constraintBottom_toBottomOf="@id/reserveButton"
+                app:layout_constraintStart_toStartOf="parent"
+                android:progressTint="@color/yellow"
+                android:scaleX="0.5"
+                android:scaleY="0.5"
+                android:isIndicator="true"
                 />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Rate"
-                android:textColor="@color/white"
-                />
-        </androidx.cardview.widget.CardView>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/reserveButton"

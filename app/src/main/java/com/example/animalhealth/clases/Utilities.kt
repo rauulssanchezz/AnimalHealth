@@ -14,6 +14,10 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class Utilities {
 
@@ -30,6 +34,17 @@ class Utilities {
 
         suspend fun createClinic(clinic:Clinic,db_ref:DatabaseReference){
             db_ref.child("Clinics").child(clinic.id).setValue(clinic).await()
+        }
+
+        fun calcularDistancia(latitud1: Double, longitud1: Double, latitud2: Double, longitud2: Double): Double {
+            val radioTierra = 6371 // Radio de la Tierra en kilómetros
+            val deltaLatitud = Math.toRadians(latitud2 - latitud1)
+            val deltaLongitud = Math.toRadians(longitud2 - longitud1)
+            val a = sin(deltaLatitud / 2) * sin(deltaLatitud / 2) +
+                    cos(Math.toRadians(latitud1)) * cos(Math.toRadians(latitud2)) *
+                    sin(deltaLongitud / 2) * sin(deltaLongitud / 2)
+            val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+            return radioTierra * c
         }
 
         suspend fun savePhoto(image:Uri,root:String,id:String):String{

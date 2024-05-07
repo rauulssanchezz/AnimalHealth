@@ -4,17 +4,20 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.animalhealth.R
+import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.Reviews
 import com.example.animalhealth.clases.Utilities
 
-class ReviewsAdapter(private val reviews_list:MutableList<Reviews>): RecyclerView.Adapter<ReviewsAdapter.ReviewsViewHolder>() {
-
+class ReviewsAdapter(private var reviews_list:MutableList<Reviews>): RecyclerView.Adapter<ReviewsAdapter.ReviewsViewHolder>(),
+    Filterable {
     private lateinit var context: Context
     private var filter_list = reviews_list
 
@@ -38,7 +41,7 @@ class ReviewsAdapter(private val reviews_list:MutableList<Reviews>): RecyclerVie
     override fun onBindViewHolder(holder: ReviewsViewHolder, position: Int) {
         val actual_item = filter_list[position]
         holder.name.text = actual_item.userName
-        holder.ratingBar.rating = actual_item.rate?: 0.0f
+        holder.ratingBar.rating = actual_item.rate!!
 
         val URL: String? = when (actual_item.userPhoto) {
             "" -> null
@@ -47,5 +50,20 @@ class ReviewsAdapter(private val reviews_list:MutableList<Reviews>): RecyclerVie
 
         Glide.with(context).load(URL).apply(Utilities.glideOptions(context))
             .transition(Utilities.transition).into(holder.photo)
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(p0: CharSequence?): FilterResults {
+                filter_list = reviews_list
+                val filterResults = FilterResults()
+                filterResults.values = filter_list
+                return filterResults
+            }
+
+            override fun publishResults(p0: CharSequence?, p1: FilterResults?) {
+                notifyDataSetChanged()
+            }
+        }
     }
 }
