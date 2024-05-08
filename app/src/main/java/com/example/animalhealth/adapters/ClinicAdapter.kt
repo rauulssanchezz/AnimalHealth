@@ -3,6 +3,7 @@ package com.example.animalhealth.adapters
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,9 +65,9 @@ class ClinicAdapter(private val clinic_list:MutableList<Clinic>): RecyclerView.A
             holder.ratingBar.rating=actual_item.rate
             holder.phone.text=actual_item.phone
 
-            var fav: String = sharedPreferences.getString("favClinic", " ")!!
+            var fav: String = Utilities.obtainFavClinics(dbRef = FirebaseDatabase.getInstance().reference)
             var favs = fav.split(",")
-
+            Log.d("fav", "$fav de adapter")
             if (favs.contains(actual_item.id)) {
                 holder.fav.setImageResource(R.drawable.baseline_favorite_24)
             }
@@ -75,6 +76,8 @@ class ClinicAdapter(private val clinic_list:MutableList<Clinic>): RecyclerView.A
 
                 if (fav == "null"){
                     fav = "$actual_item.id,"
+                }else{
+
                 }
 
                 if (!favs.contains(actual_item.id)) {
@@ -82,22 +85,6 @@ class ClinicAdapter(private val clinic_list:MutableList<Clinic>): RecyclerView.A
                     fav = fav.trim()
                     holder.fav.setImageResource(R.drawable.baseline_favorite_24)
 
-                    val editor = sharedPreferences.edit()
-                    editor.putString("favClinic", fav)
-                    editor.apply()
-
-                    val id = FirebaseAuth.getInstance().currentUser?.uid
-                    var name = sharedPreferences.getString("Name", "")
-                    var email = sharedPreferences.getString("Email", "")
-                    var password = sharedPreferences.getString("Password", "")
-                    var type = sharedPreferences.getString("Type", "")
-                    var img = sharedPreferences.getString("Img", "")
-
-                    GlobalScope.launch {
-                        val db_ref = FirebaseDatabase.getInstance().reference
-                        db_ref.child("Users").child(id!!)
-                            .setValue(User(id, name!!, email!!, password!!, type!!, img!!, fav))
-                    }
                 }else{
                     fav = fav.replace(actual_item.id, "")
                     fav = fav.replace(",,", ",")
@@ -108,24 +95,19 @@ class ClinicAdapter(private val clinic_list:MutableList<Clinic>): RecyclerView.A
                     }
 
                     holder.fav.setImageResource(R.drawable.baseline_favorite_border_24)
+                }
 
-                    val editor = sharedPreferences.edit()
-                    editor.putString("favClinic", fav)
-                    editor.apply()
+                val id = FirebaseAuth.getInstance().currentUser?.uid
+                var name = sharedPreferences.getString("Name", "")
+                var email = sharedPreferences.getString("Email", "")
+                var password = sharedPreferences.getString("Password", "")
+                var type = sharedPreferences.getString("Type", "")
+                var img = sharedPreferences.getString("Img", "")
 
-                    val id = FirebaseAuth.getInstance().currentUser?.uid
-                    var name = sharedPreferences.getString("Name", "")
-                    var email = sharedPreferences.getString("Email", "")
-                    var password = sharedPreferences.getString("Password", "")
-                    var type = sharedPreferences.getString("Type", "")
-                    var img = sharedPreferences.getString("Img", "")
-
-                    GlobalScope.launch {
-                        val db_ref = FirebaseDatabase.getInstance().reference
-                        db_ref.child("Users").child(id!!)
-                            .setValue(User(id, name!!, email!!, password!!, type!!, img!!, fav))
-                    }
-
+                GlobalScope.launch {
+                    val db_ref = FirebaseDatabase.getInstance().reference
+                    db_ref.child("Users").child(id!!)
+                        .setValue(User(id, name!!, email!!, password!!, type!!, img!!, fav))
                 }
             }
             holder.itemView.setOnClickListener {

@@ -19,6 +19,7 @@ import com.example.animalhealth.R
 import com.example.animalhealth.adapters.ClinicAdapter
 import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.Utilities
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -34,6 +35,7 @@ class ClientClinicsFragment : Fragment() {
     private lateinit var search : SearchView
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var newList : MutableList<Clinic>
+    private lateinit var favClinics : String
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,6 +49,7 @@ class ClientClinicsFragment : Fragment() {
         search = view.findViewById(R.id.searchView)
         sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
         newList = mutableListOf()
+        favClinics = ""
 
         obtainClinics()
 
@@ -75,9 +78,9 @@ class ClientClinicsFragment : Fragment() {
 
                     R.id.fav ->{
                         Log.d("Fav", "Entra en fav")
-                        val favClinics = sharedPreferences.getString("favClinics", "")!!.split(",")
+                        Utilities.obtainFavClinics(dbRef)
                         Log.d("Fav", favClinics.toString())
-                        if (favClinics.isEmpty()) {
+                        if (favClinics == "null") {
                             Log.d("Fav", "No hay favoritos")
                             Toast.makeText(requireContext(), "No hay clínicas favoritas", Toast.LENGTH_SHORT).show()
                         }else{
@@ -177,4 +180,6 @@ class ClientClinicsFragment : Fragment() {
                 }
             })
     }
+
+
 }

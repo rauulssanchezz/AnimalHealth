@@ -8,8 +8,11 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.animalhealth.R
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
@@ -55,6 +58,25 @@ class Utilities {
 
             return url_photo_firebase.toString()
 
+        }
+
+        fun obtainFavClinics(dbRef:DatabaseReference): String {
+            var favClinics = ""
+            dbRef.child("Users").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach { child: DataSnapshot ->
+                        if (child.key == FirebaseAuth.getInstance().currentUser?.uid) {
+                            favClinics = child.child("favClinics").value.toString()
+                        }
+                        Log.d("Fav", favClinics)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    println(error.message)
+                }
+            })
+            return favClinics
         }
 
         suspend fun obtainUser(dtb_ref: DatabaseReference):User?{
