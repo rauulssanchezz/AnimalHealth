@@ -4,6 +4,49 @@
         <item>Veterinario</item>
         <item>Cliente</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="species_array">
+        <item>Perro</item>
+        <item>Gato</item>
+        <item>Pájaro</item>
+        <item>Otro</item>
+    </string-array>
+
+    <string-array name="vaccine_array">
+        <item>Vacuna contra la rabia</item>
+        <item>Vacuna contra la parvovirosis canina</item>
+        <item>Vacuna contra la leptospirosis</item>
+        <item>Vacuna contra la panleucopenia felina </item>
+        <item>Vacuna contra la rinotraqueitis felina</item>
+        <item>Vacuna contra la clamidiosis felina</item>
+        <item>Vacuna contra la papilomatosis aviar</item>
+        <item>Vacuna contra la salmonelosis aviar</item>
+        <item>Vacuna contra la coriza infecciosa aviar</item>
+        <item>Ninguna</item>
+    </string-array>
+
+    <string-array name="dog_breed_array">
+        <item>Beagle</item>
+        <item>Doberman</item>
+        <item>Labrador</item>
+        <item>Otro</item>
+    </string-array>
+
+    <string-array name="cat_breed_array">
+        <item>Común</item>
+        <item>Angora</item>
+        <item>Manx</item>
+        <item>Otro</item>
+    </string-array>
+
+    <string-array name="bird_breed_array">
+        <item>Canario</item>
+        <item>Periquito</item>
+        <item>Agapornis</item>
+        <item>Otro</item>
+    </string-array>
+
+    <string-array name="other_breed_array">
+        <item>Otro</item>
+    </string-array>
+
 </resources>

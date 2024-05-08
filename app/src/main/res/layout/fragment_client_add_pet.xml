@@ -45,51 +45,31 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutType"
+    <Spinner
+        android:id="@+id/spinnerType"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/textInputLayoutName"
         app:layout_constraintStart_toStartOf="@id/textInputLayoutName"
-        app:layout_constraintEnd_toStartOf="@id/textInputLayoutBreed"
+        app:layout_constraintEnd_toStartOf="@id/spinnerBreed"
         android:layout_marginTop="16dp"
-        style="@style/Widget.Design.TextInputLayout"
-        >
+        />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Tipo Ej:Perro, gato..."
-            android:inputType="text" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutBreed"
+    <Spinner
+        android:id="@+id/spinnerBreed"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/textInputLayoutName"
-        app:layout_constraintStart_toEndOf="@id/textInputLayoutType"
+        app:layout_constraintStart_toEndOf="@id/spinnerType"
         app:layout_constraintEnd_toEndOf="@id/textInputLayoutName"
         android:layout_marginTop="16dp"
-        style="@style/Widget.Design.TextInputLayout"
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextBreed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Raza"
-            android:inputType="text"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
+        />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayoutIlness"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/textInputLayoutBreed"
+        app:layout_constraintTop_toBottomOf="@id/spinnerBreed"
         app:layout_constraintStart_toStartOf="@id/textInputLayoutName"
         app:layout_constraintEnd_toEndOf="@id/textInputLayoutName"
         android:layout_marginTop="16dp"
@@ -121,15 +101,12 @@
         style="@style/Widget.Design.TextInputLayout"
         >
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextVacunes"
+        <Spinner
+            android:id="@+id/spinnerVacunes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Vacunas"
-            android:gravity="top|start"
-            android:padding="10dp"
-            android:background="@android:drawable/editbox_background"
-            android:inputType="textMultiLine"/>
+            android:inputType="text" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

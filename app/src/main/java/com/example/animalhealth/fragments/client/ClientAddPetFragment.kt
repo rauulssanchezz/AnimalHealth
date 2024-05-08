@@ -6,8 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
@@ -33,10 +36,10 @@ class ClientAddPetFragment : Fragment() {
     private lateinit var db_ref: DatabaseReference
     private lateinit var navController: NavController
     private lateinit var nameEditText: TextInputEditText
-    private lateinit var typeEditText: TextInputEditText
-    private lateinit var breedEditText: TextInputEditText
+    private lateinit var typeSpinner: Spinner
+    private lateinit var breedSpinner: Spinner
     private lateinit var ilnessEditText: TextInputEditText
-    private lateinit var vacunesEditText: TextInputEditText
+    private lateinit var vacunesSpinner: Spinner
     private lateinit var ageEditText: TextInputEditText
     private lateinit var weightEditText: TextInputEditText
     private lateinit var savePet: Button
@@ -64,93 +67,218 @@ class ClientAddPetFragment : Fragment() {
 
         photo = view.findViewById(R.id.addPhoto)
         nameEditText = view.findViewById(R.id.editTextName)
-        typeEditText = view.findViewById(R.id.editTextType)
-        breedEditText = view.findViewById(R.id.editTextBreed)
+        typeSpinner = view.findViewById(R.id.spinnerType)
+        breedSpinner = view.findViewById(R.id.spinnerBreed)
         ilnessEditText = view.findViewById(R.id.editTextIlness)
-        vacunesEditText = view.findViewById(R.id.editTextVacunes)
+        vacunesSpinner = view.findViewById(R.id.spinnerVacunes)
         ageEditText = view.findViewById(R.id.editTextAge)
         weightEditText = view.findViewById(R.id.editTextWeight)
         savePet = view.findViewById(R.id.buttonSave)
 
-        savePet.setOnClickListener {
-            if (
-                !nameEditText.text.isNullOrBlank() && !typeEditText.text.isNullOrBlank()
-                && !breedEditText.text.isNullOrBlank() && !ilnessEditText.text.isNullOrBlank()
-                && !vacunesEditText.text.isNullOrBlank() && !ageEditText.text.isNullOrBlank()
-                && !weightEditText.text.isNullOrBlank()
-                ){
+        ArrayAdapter.createFromResource(
+            requireActivity(),
+            R.array.species_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears.
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner.
+            typeSpinner.adapter = adapter
+        }
 
-                name = nameEditText.text.toString().trim().capitalize()
-                type = typeEditText.text.toString().trim().capitalize()
-                breed = breedEditText.text.toString().trim().capitalize()
-                ilness = ilnessEditText.text.toString().trim().capitalize()
-                vacunes = vacunesEditText.text.toString().trim().capitalize()
-                age = ageEditText.text.toString().trim().capitalize()
-                weight = weightEditText.text.toString().trim().capitalize()
-                owner = FirebaseAuth.getInstance().currentUser!!.uid.toString()
+        typeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                type = typeSpinner.selectedItem.toString()
+                breedSpinner()
+            }
 
-                val generatedId:String? = db_ref.child("Pets").push().key
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                type = ""
+            }
+        }
 
-                GlobalScope.launch {
-                    val pet:Pet
-                    if (url_photo!=null) {
-                        val urlPhotoFirebase = Utilities.savePhoto(
-                            url_photo!!,
-                            "Pets",
-                            FirebaseAuth.getInstance().currentUser!!.uid
-                        )
-                        pet = Pet(
-                            generatedId!!,
-                            name,
-                            type,
-                            breed,
-                            age,
-                            ilness,
-                            vacunes,
-                            weight,
-                            owner,
-                            urlPhotoFirebase
-                        )
-                    }else {
-                        pet = Pet(
-                            generatedId!!,
-                            name,
-                            type,
-                            breed,
-                            age,
-                            ilness,
-                            vacunes,
-                            weight,
-                            owner
-                        )
+            breedSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    breed = breedSpinner.selectedItem.toString()
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    breed = ""
+                }
+            }
+
+            ArrayAdapter.createFromResource(
+                requireActivity(),
+                R.array.vaccine_array,
+                android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                // Specify the layout to use when the list of choices appears.
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                // Apply the adapter to the spinner.
+                vacunesSpinner.adapter = adapter
+            }
+
+            vacunesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    vacunes += vacunesSpinner.selectedItem.toString() + "\n"
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    vacunes = ""
+                }
+            }
+
+            savePet.setOnClickListener {
+                if (
+                    !nameEditText.text.isNullOrBlank() && type != ""
+                    && breed != "" && !ilnessEditText.text.isNullOrBlank()
+                    && vacunes != "" && !ageEditText.text.isNullOrBlank()
+                    && !weightEditText.text.isNullOrBlank()
+                ) {
+
+                    name = nameEditText.text.toString().trim().capitalize()
+                    ilness = ilnessEditText.text.toString().trim().capitalize()
+                    age = ageEditText.text.toString().trim().capitalize()
+                    weight = weightEditText.text.toString().trim().capitalize()
+                    owner = FirebaseAuth.getInstance().currentUser!!.uid.toString()
+
+                    val generatedId: String? = db_ref.child("Pets").push().key
+
+                    GlobalScope.launch {
+                        val pet: Pet
+                        if (url_photo != null) {
+                            val urlPhotoFirebase = Utilities.savePhoto(
+                                url_photo!!,
+                                "Pets",
+                                FirebaseAuth.getInstance().currentUser!!.uid
+                            )
+                            pet = Pet(
+                                generatedId!!,
+                                name,
+                                type,
+                                breed,
+                                age,
+                                ilness,
+                                vacunes,
+                                weight,
+                                owner,
+                                urlPhotoFirebase
+                            )
+                        } else {
+                            pet = Pet(
+                                generatedId!!,
+                                name,
+                                type,
+                                breed,
+                                age,
+                                ilness,
+                                vacunes,
+                                weight,
+                                owner
+                            )
+                        }
+
+                        Utilities.createPet(pet, db_ref)
+
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Mascota guardada con exito",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            navController.navigate(R.id.action_clientAddPetFragment_to_clientPetFragment)
+                        }
+
                     }
 
-                    Utilities.createPet(pet,db_ref)
+                } else {
+                    Toast.makeText(requireContext(), "Faltan datos", Toast.LENGTH_SHORT).show()
+                }
 
-                    withContext(Dispatchers.Main){
-                        Toast.makeText(requireContext(),"Mascota guardada con exito",Toast.LENGTH_SHORT).show()
+            }
+
+            photo.setOnClickListener {
+                galeryAcces.launch("image/*")
+            }
+
+            return view
+        }
+
+        private fun breedSpinner(){
+            when (type) {
+                "Perro" -> {
+                    ArrayAdapter.createFromResource(
+                        requireActivity(),
+                        R.array.dog_breed_array,
+                        android.R.layout.simple_spinner_item
+                    ).also { adapter ->
+                        // Specify the layout to use when the list of choices appears.
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        // Apply the adapter to the spinner.
+                        breedSpinner.adapter = adapter
+                    }
+                }
+                "Gato" -> {
+                    ArrayAdapter.createFromResource(
+                        requireActivity(),
+                        R.array.cat_breed_array,
+                        android.R.layout.simple_spinner_item
+                    ).also { adapter ->
+                        // Specify the layout to use when the list of choices appears.
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        // Apply the adapter to the spinner.
+                        breedSpinner.adapter = adapter
                     }
 
                 }
-
-            }else{
-                Toast.makeText(requireContext(),"Faltan datos",Toast.LENGTH_SHORT).show()
+                "Pájaro" -> {
+                    ArrayAdapter.createFromResource(
+                        requireActivity(),
+                        R.array.bird_breed_array,
+                        android.R.layout.simple_spinner_item
+                    ).also { adapter ->
+                        // Specify the layout to use when the list of choices appears.
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        // Apply the adapter to the spinner.
+                        breedSpinner.adapter = adapter
+                    }
+                }
+                "Otro" -> {
+                    ArrayAdapter.createFromResource(
+                        requireActivity(),
+                        R.array.other_breed_array,
+                        android.R.layout.simple_spinner_item
+                    ).also { adapter ->
+                        // Specify the layout to use when the list of choices appears.
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        // Apply the adapter to the spinner.
+                        breedSpinner.adapter = adapter
+                    }
+                }
             }
-
         }
 
-        photo.setOnClickListener {
-            galeryAcces
-        }
-
-        return view
-    }
-
-    private val galeryAcces = registerForActivityResult(ActivityResultContracts.GetContent())
-    { uri: Uri? ->
-        if (uri != null) {
-            url_photo = uri
-            photo.setImageURI(uri)
+        private val galeryAcces = registerForActivityResult(ActivityResultContracts.GetContent())
+        { uri: Uri? ->
+            if (uri != null) {
+                url_photo = uri
+                photo.setImageURI(uri)
+            }
         }
     }
-}
