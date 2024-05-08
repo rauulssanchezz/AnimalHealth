@@ -66,13 +66,41 @@ class ClientClinicsFragment : Fragment() {
         })
 
         filters.setOnClickListener {
-            obtainClinics()
             val popupMenu = PopupMenu(requireContext(), it)
 
             popupMenu.inflate(R.menu.client_clinics_filters_menu)
 
             popupMenu.setOnMenuItemClickListener { item ->
                 when(item.itemId) {
+
+                    R.id.fav ->{
+                        Log.d("Fav", "Entra en fav")
+                        val favClinics = sharedPreferences.getString("favClinics", "")!!.split(",")
+                        Log.d("Fav", favClinics.toString())
+                        if (favClinics.isEmpty()) {
+                            Log.d("Fav", "No hay favoritos")
+                            Toast.makeText(requireContext(), "No hay clínicas favoritas", Toast.LENGTH_SHORT).show()
+                        }else{
+                            Log.d("Fav", "Hay favoritos")
+                            for (clinic in list) {
+                                Log.d("Fav", clinic.id)
+                                Log.d("Fav", favClinics.toString())
+                                if (favClinics.contains(clinic.id)) {
+                                    Log.d("Fav", "Añade a la lista")
+                                    newList.add(clinic)
+                                    Log.d("Fav", newList.toString())
+                                }
+                            }
+                            list.clear()
+                            list.addAll(newList)
+                            newList.clear()
+                            Log.d("Fav", list.toString())
+                            adapter.notifyDataSetChanged()
+                            Log.d("Fav", "Notifica")
+                        }
+                        true
+                    }
+
                     R.id.name -> {
                         list.sortBy { it.name }
                         adapter.notifyDataSetChanged()
@@ -101,9 +129,16 @@ class ClientClinicsFragment : Fragment() {
                     }
                     R.id.reviews -> {
                         list.sortBy { it.rate }
+                        list.reverse()
                         adapter.notifyDataSetChanged()
                         true
                     }
+
+                    R.id.all -> {
+                        obtainClinics()
+                        true
+                    }
+
                     else -> false
                 }
             }

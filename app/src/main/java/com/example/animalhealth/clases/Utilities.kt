@@ -22,9 +22,9 @@ import kotlin.math.sqrt
 class Utilities {
 
     companion object{
-        suspend fun createUser(email:String,password:String,name:String,img:String,type:String){
+        suspend fun createUser(email:String,password:String,name:String,img:String,type:String,fav:String){
             val dtb_ref= FirebaseDatabase.getInstance().reference
-            val user=User(FirebaseAuth.getInstance().currentUser!!.uid,name, email, password,type,img)
+            val user=User(FirebaseAuth.getInstance().currentUser!!.uid,name, email, password,type,img,fav)
             dtb_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).setValue(user).await()
         }
 

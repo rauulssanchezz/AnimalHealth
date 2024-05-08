@@ -2,18 +2,28 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/fav"
+        android:title="Mostrar favoritas"
+        />
+
+    <item
         android:id="@+id/name"
         android:title="Ordenar por nombre"
         />
 
     <item
         android:id="@+id/ubication"
-        android:title="Mostrar mas cercanos."
+        android:title="Mostrar mas cercanas."
         />
 
     <item
         android:id="@+id/reviews"
-        android:title="Mostrar mejor valorados"
+        android:title="Ordenar por valoracion"
+        />
+
+    <item
+        android:id="@+id/all"
+        android:title="Mostrar todas"
         />
 
 </menu>

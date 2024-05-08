@@ -126,6 +126,8 @@ class RegisterFragment : Fragment() {
                             // Aquí se debe registrar el usuario
                             auth.createUserWithEmailAndPassword(email, password)
                                 .addOnCompleteListener(requireActivity()) { task ->
+
+                                    var fav = "null"
                                     if (task.isSuccessful) {
                                         GlobalScope.launch {
                                             if (url_photo != null) {
@@ -135,7 +137,8 @@ class RegisterFragment : Fragment() {
                                                     password,
                                                     nombre,
                                                     url_img,
-                                                    type
+                                                    type,
+                                                    fav
                                                 )
                                             } else {
                                                 Utilities.createUser(
@@ -143,7 +146,8 @@ class RegisterFragment : Fragment() {
                                                     password,
                                                     nombre,
                                                     "",
-                                                    type
+                                                    type,
+                                                    fav
                                                 )
                                             }
                                         }

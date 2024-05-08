@@ -39,6 +39,7 @@ class LoadingFragment : Fragment() {
                 putString("Password",user?.password)
                 putString("Type",user?.type)
                 putString("Img",user?.img)
+                putString("FavClinics",user?.favClinics)
                 apply()
             }
             withContext(Dispatchers.Main) {

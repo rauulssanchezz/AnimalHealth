@@ -11,5 +11,6 @@ data class User(
     var email: String="",
     var password: String="",
     var type: String="",
-    var img: String = ""
+    var img: String = "",
+    var favClinics : String = ""
 ):Parcelable
