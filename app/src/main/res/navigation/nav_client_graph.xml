@@ -10,10 +10,6 @@
         android:label="fragment_clientClinics"
         tools:layout="@layout/fragment_client_clinics" >
         <action
-            android:id="@+id/action_clientClinicsFragment_to_clientClinicInfoFragment"
-            app:destination="@id/clientClinicInfoFragment"
-            />
-        <action
             android:id="@+id/action_clientClinicsFragment_to_clientBookingFragment"
             app:destination="@id/clientBookingFragment"
             />
@@ -44,12 +40,11 @@
     </fragment>
 
     <fragment
-        android:id="@+id/clientClinicInfoFragment"
-        android:name="com.example.animalhealth.fragments.client.ClientClinicInfoFragment"
-        android:label="fragment_clientClinicInfo"
-        tools:layout="@layout/fragment_client_clinic_info"
-        >
-    </fragment>
+        android:id="@+id/userFragment"
+        android:name="com.example.animalhealth.fragments.common.UserFragment"
+        android:label="fragment_user"
+        tools:layout="@layout/fragment_user"
+        />
 
     <fragment
         android:id="@+id/clientBookingFragment"

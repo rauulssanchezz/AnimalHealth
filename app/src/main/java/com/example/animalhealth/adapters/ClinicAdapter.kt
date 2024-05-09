@@ -64,8 +64,12 @@ class ClinicAdapter(private val clinic_list:MutableList<Clinic>): RecyclerView.A
             holder.address.text=actual_item.location
             holder.ratingBar.rating=actual_item.rate
             holder.phone.text=actual_item.phone
+            var fav = ""
+            GlobalScope.launch {
+                fav= Utilities.obtainFavClinics(dbRef = FirebaseDatabase.getInstance().reference)
+            }
 
-            var fav: String = Utilities.obtainFavClinics(dbRef = FirebaseDatabase.getInstance().reference)
+            Log.d("fav", "$fav de adapter1")
             var favs = fav.split(",")
             Log.d("fav", "$fav de adapter")
             if (favs.contains(actual_item.id)) {

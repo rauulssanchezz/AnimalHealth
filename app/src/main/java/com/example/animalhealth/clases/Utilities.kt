@@ -60,7 +60,28 @@ class Utilities {
 
         }
 
-        fun obtainFavClinics(dbRef:DatabaseReference): String {
+        suspend fun getPhoto(root: String,id: String):Uri{
+            var sto_ref: StorageReference = FirebaseStorage.getInstance().reference
+            return sto_ref.child(root).child("photos").child(id).downloadUrl.await()
+        }
+
+        suspend fun deletePhotos(root: String,id: String){
+            var sto_ref: StorageReference = FirebaseStorage.getInstance().reference
+            sto_ref.child(root).child("photos").child(id).delete().await()
+        }
+
+        suspend fun deletePets(ownerId:String,db_ref:DatabaseReference){
+            deletePhotos("Pets",ownerId)
+            db_ref.child("Pets").child(ownerId).removeValue().await()
+        }
+
+        suspend fun deleteUser(userId:String,db_ref:DatabaseReference){
+            deletePhotos("Users",userId)
+            deletePets(userId,db_ref)
+            db_ref.child("Users").child(userId).removeValue().await()
+        }
+
+        suspend fun obtainFavClinics(dbRef:DatabaseReference): String {
             var favClinics = ""
             dbRef.child("Users").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -117,7 +138,7 @@ class Utilities {
         val transition = DrawableTransitionOptions.withCrossFade(500)
         fun glideOptions(contex: Context): RequestOptions {
             val options = RequestOptions().placeholder(load_animation(contex))
-                .fallback(R.drawable.icons8_cl_nica_96)
+                .fallback(R.drawable.logo_animal_health)
                 .error(R.drawable.baseline_error_outline_24)
             return options
         }

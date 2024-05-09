@@ -25,6 +25,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ClientClinicsFragment : Fragment() {
     private lateinit var dbRef : DatabaseReference
@@ -78,7 +80,9 @@ class ClientClinicsFragment : Fragment() {
 
                     R.id.fav ->{
                         Log.d("Fav", "Entra en fav")
-                        Utilities.obtainFavClinics(dbRef)
+                        GlobalScope.launch {
+                           favClinics = Utilities.obtainFavClinics(dbRef)
+                        }
                         Log.d("Fav", favClinics.toString())
                         if (favClinics == "null") {
                             Log.d("Fav", "No hay favoritos")

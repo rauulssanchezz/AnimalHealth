@@ -39,9 +39,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/vetScheduleFragment"
-        android:name="com.example.animalhealth.fragments.vet.VetScheduleFragment"
-        android:label="fragment_vetSchedule"
-        tools:layout="@layout/fragment_vet_schedule" />
+        android:id="@+id/userFragment"
+        android:name="com.example.animalhealth.fragments.common.UserFragment"
+        android:label="fragment_user"
+        tools:layout="@layout/fragment_user"
+        />
 
 </navigation>
