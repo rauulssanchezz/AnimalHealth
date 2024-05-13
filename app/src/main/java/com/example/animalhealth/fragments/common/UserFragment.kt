@@ -24,6 +24,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -48,17 +49,17 @@ class UserFragment : Fragment() {
         val logOutButton = view.findViewById<Button>(R.id.logOutButton)
 
         url_img = sharedPreferences.getString("Img", "").toString()
-        var name = sharedPreferences.getString("Name", "")
+        var beforeUrl_img = url_img.toString()
+        var beforeName = sharedPreferences.getString("Name", "")
         var email = sharedPreferences.getString("Email", "")
         var type = sharedPreferences.getString("Type", "")
         var password = sharedPreferences.getString("Password", "")
         var favClinics = sharedPreferences.getString("FavClinics", "")
+        var name = beforeName
 
         val user = FirebaseAuth.getInstance().currentUser
 
-        GlobalScope.launch {
-            url_photo = Utilities.getPhoto("Users", user!!.uid)
-        }
+        Glide.with(requireContext()).load(beforeUrl_img).apply(Utilities.glideOptions(requireContext())).transition(Utilities.transition).into(photo)
 
         photo.setOnClickListener {
             galeryAcces.launch("image/*")
@@ -66,58 +67,52 @@ class UserFragment : Fragment() {
 
         Log.d("URL", url_photo.toString())
 
-        val URL:String? = when (url_img){
-            ""->null
-            else->url_img
-        }
-
-        Glide.with(requireContext()).load(URL).apply(Utilities.glideOptions(requireContext())).transition(Utilities.transition).into(photo)
-
-        userNameEditText.setText(name)
+        userNameEditText.setText(beforeName)
         userEmailEditText.setText(email)
         userTypeEditText.setText(type)
         userPasswordEditText.setText(password)
 
         saveChangesButton.setOnClickListener {
-            with(sharedPreferences.edit()) {
-                putString("Img", url_photo.toString())
-                putString("Name", userNameEditText.text.toString())
-                putString("Email", userEmailEditText.text.toString())
-                putString("Type", userTypeEditText.text.toString())
-                putString("Password", userPasswordEditText.text.toString())
-                putString("FavClinics", favClinics)
-                apply()
-            }
-            user?.updatePassword(userPasswordEditText.text.toString())?.addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.d("UserFragment", "Password updated")
-                } else {
-                    Log.d("UserFragment", "Password not updated")
+            name = userNameEditText.text.toString()
+            if (name == "") {
+                Toast.makeText(requireContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
+            }else {
+
+                GlobalScope.launch {
+                    var url_photo_firebase = String()
+                    if (beforeName == name && url_photo == null) {
+                        GlobalScope.launch(Main) {
+                            Toast.makeText(requireContext(), "No se han realizado cambios", Toast.LENGTH_SHORT).show()
+                        }
+                        return@launch
+                    }
+                    if (url_photo == null) {
+                        url_photo_firebase = url_img
+                    } else {
+                        url_photo_firebase =
+                            Utilities.savePhoto(url_photo!!, "Users", user!!.uid)
+                    }
+
+                    Utilities.createUser(
+                        userEmailEditText.text.toString(),
+                        userPasswordEditText.text.toString(),
+                        userNameEditText.text.toString(),
+                        url_photo_firebase,
+                        userTypeEditText.text.toString(),
+                        favClinics!!
+                    )
+
+                    GlobalScope.launch(Dispatchers.Main) {
+                        with(sharedPreferences.edit()) {
+                            putString("Img", url_photo_firebase.toString())
+                            putString("Name", userNameEditText.text.toString())
+                            apply()
+                        }
+                        Toast.makeText(requireContext(), "Cambios guardados", Toast.LENGTH_SHORT).show()
+                    }
+
                 }
             }
-            user?.updateEmail(userEmailEditText.text.toString())?.addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.d("UserFragment", "Email updated")
-                } else {
-                    Log.d("UserFragment", "Email not updated")
-                }
-            }
-
-            GlobalScope.launch {
-                url_img = Utilities.savePhoto(url_photo!!,"Users",FirebaseAuth.getInstance().currentUser!!.uid)
-
-                Utilities.createUser(
-                    userEmailEditText.text.toString(),
-                    userPasswordEditText.text.toString(),
-                    userNameEditText.text.toString(),
-                    url_img,
-                    userTypeEditText.text.toString(),
-                    favClinics!!
-                )
-            }
-            FirebaseAuth.getInstance().updateCurrentUser(user!!)
-            Toast.makeText(requireContext(), "Cambios guardados", Toast.LENGTH_SHORT).show()
-
         }
 
         logOutButton.setOnClickListener {

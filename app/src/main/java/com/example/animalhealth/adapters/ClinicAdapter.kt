@@ -16,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.animalhealth.R
@@ -36,12 +37,15 @@ class ClinicAdapter(private val clinic_list:MutableList<Clinic>): RecyclerView.A
         private lateinit var context: Context
         private var filter_list=clinic_list
         private lateinit var  sharedPreferences : SharedPreferences
+        private lateinit var navController: NavController
 
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClinicViewHolder {
             val item_view= LayoutInflater.from(parent.context).inflate(R.layout.item_clinic,parent,false)
             context=parent.context
             sharedPreferences = context.getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+            navController = Navigation.findNavController(parent)
+
             return ClinicViewHolder(item_view)
         }
 
@@ -64,6 +68,12 @@ class ClinicAdapter(private val clinic_list:MutableList<Clinic>): RecyclerView.A
             holder.address.text=actual_item.location
             holder.ratingBar.rating=actual_item.rate
             holder.phone.text=actual_item.phone
+
+            holder.booking.setOnClickListener {
+                navController.navigate(R.id.action_clientClinicsFragment_to_clientBookingFragment)
+                sharedPreferences.edit().putString("clinicId", actual_item.id).apply()
+            }
+
             var fav = ""
             GlobalScope.launch {
                 fav= Utilities.obtainFavClinics(dbRef = FirebaseDatabase.getInstance().reference)

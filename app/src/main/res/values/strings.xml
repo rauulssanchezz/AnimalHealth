@@ -48,7 +48,30 @@
     <string-array name="other_breed_array">
         <item>Otro</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="booking_types_array">
+        <item>Consulta</item>
+        <item>Vacunación</item>
+        <item>Desparasitación</item>
+        <item>Operación</item>
+        <item>Revisión</item>
+        <item>Urgencia</item>
+    </string-array>
+
+    <string-array name="booking_hours_array">
+        <item>08:00</item>
+        <item>09:00</item>
+        <item>10:00</item>
+        <item>11:00</item>
+        <item>12:00</item>
+        <item>13:00</item>
+        <item>14:00</item>
+        <item>15:00</item>
+        <item>16:00</item>
+        <item>17:00</item>
+        <item>18:00</item>
+        <item>19:00</item>
+        <item>20:00</item>
+    </string-array>
 
 </resources>

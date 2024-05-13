@@ -60,9 +60,14 @@ class Utilities {
 
         }
 
-        suspend fun getPhoto(root: String,id: String):Uri{
+        suspend fun savePetPhoto(image:Uri,root:String,Ownerid:String,id: String):String{
+            lateinit var url_photo_firebase: Uri
             var sto_ref: StorageReference = FirebaseStorage.getInstance().reference
-            return sto_ref.child(root).child("photos").child(id).downloadUrl.await()
+            url_photo_firebase = sto_ref.child(root).child("photos").child(Ownerid).child(id)
+                .putFile(image).await().storage.downloadUrl.await()
+
+            return url_photo_firebase.toString()
+
         }
 
         suspend fun deletePhotos(root: String,id: String){

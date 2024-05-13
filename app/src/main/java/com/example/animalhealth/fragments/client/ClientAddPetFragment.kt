@@ -161,10 +161,11 @@ class ClientAddPetFragment : Fragment() {
                     GlobalScope.launch {
                         val pet: Pet
                         if (url_photo != null) {
-                            val urlPhotoFirebase = Utilities.savePhoto(
+                            val urlPhotoFirebase = Utilities.savePetPhoto(
                                 url_photo!!,
                                 "Pets",
-                                FirebaseAuth.getInstance().currentUser!!.uid
+                                FirebaseAuth.getInstance().currentUser!!.uid,
+                                generatedId!!
                             )
                             pet = Pet(
                                 generatedId!!,

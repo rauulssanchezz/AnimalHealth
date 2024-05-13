@@ -111,11 +111,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reviewsRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="270dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/textReseñas"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_review"
-        android:layout_marginBottom="20dp"
         />
 
 
