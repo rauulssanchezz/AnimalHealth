@@ -17,12 +17,19 @@ import androidx.cardview.widget.CardView
 import com.example.animalhealth.R
 import com.example.animalhealth.adapters.PetSpinnerAdapter
 import com.example.animalhealth.clases.Booking
+import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.Pet
 import com.example.animalhealth.clases.User
 import com.example.animalhealth.clases.Utilities
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import com.google.firebase.database.values
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -68,9 +75,16 @@ class ClientBookingFragment : Fragment() {
             }
         }
 
-        GlobalScope.launch {
-            bookingList = Utilities.getBooking(dbReference,clinicId)
+            dbReference.child("Bookings").child(clinicId).get().addOnSuccessListener {
+                if (it.exists()){
+                    bookingList = it.children.map { it.getValue(Booking::class.java)!! }.toMutableList()
+                }
+            }.addOnFailureListener {
+                Log.e("ERROR", it.message.toString())
+            }
             Log.d("BookingList", bookingList.toString())
+
+
             dbReference.child("Pets").child(actualUser).get().addOnSuccessListener {
                 if (it.exists()){
                     val pets = it.children.map { it.getValue(Pet::class.java)!! }
@@ -81,7 +95,6 @@ class ClientBookingFragment : Fragment() {
             }.addOnFailureListener {
                 Log.e("ERROR", it.message.toString())
             }
-        }
 
         for (booking in bookingList){
             ocupatedHours.add(booking.startHour)
@@ -164,5 +177,32 @@ class ClientBookingFragment : Fragment() {
 
     return view
     }
+    fun getBookingsForClinic(clinicId: String) {
+        val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+        val bookingsRef: DatabaseReference = database.getReference("Bookings")
 
+        // Consulta para obtener las reservas de una clínica específica
+        val query = bookingsRef.orderByChild("clinicId").equalTo(clinicId)
+
+        query.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val bookingsList = mutableListOf<Booking>()
+                for (snapshot in dataSnapshot.children) {
+                    val booking = snapshot.getValue(Booking::class.java)
+                    booking?.let {
+                        bookingsList.add(it)
+                    }
+                }
+                // Aquí puedes manejar la lista de reservas como desees
+                for (booking in bookingsList) {
+                    println("Booking: $booking")
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Manejo de errores
+                println("Error al obtener las reservas: ${databaseError.message}")
+            }
+        })
+    }
 }

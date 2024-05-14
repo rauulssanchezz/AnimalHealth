@@ -124,16 +124,6 @@ class Utilities {
             return user
         }
 
-        suspend fun getBooking(db_ref:DatabaseReference,clinicId:String):MutableList<Booking>{
-            var bookings= mutableListOf<Booking>()
-            db_ref.child("Bookings").child(clinicId).get().addOnSuccessListener {
-                if (it.exists()){
-                    bookings=it.children.map { it.getValue(Booking::class.java)!! }.toMutableList()
-                }
-            }.await()
-            return bookings
-        }
-
         suspend fun saveBooking(booking:Booking,db_ref:DatabaseReference){
             db_ref.child("Bookings").child(booking.clinicId).child(booking.id).setValue(booking).await()
         }
