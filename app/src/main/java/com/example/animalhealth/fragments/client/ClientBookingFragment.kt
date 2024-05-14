@@ -14,6 +14,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
+import androidx.lifecycle.lifecycleScope
 import com.example.animalhealth.R
 import com.example.animalhealth.adapters.PetSpinnerAdapter
 import com.example.animalhealth.clases.Booking
@@ -33,8 +34,13 @@ import com.google.firebase.database.values
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 import java.util.Date
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class ClientBookingFragment : Fragment() {
 
@@ -75,100 +81,88 @@ class ClientBookingFragment : Fragment() {
             }
         }
 
-            dbReference.child("Bookings").child(clinicId).get().addOnSuccessListener {
-                if (it.exists()){
-                    bookingList = it.children.map { it.getValue(Booking::class.java)!! }.toMutableList()
-                }
-            }.addOnFailureListener {
-                Log.e("ERROR", it.message.toString())
-            }
-            Log.d("BookingList", bookingList.toString())
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                user = Utilities.obtainUser(dbReference)!!
 
-            dbReference.child("Pets").child(actualUser).get().addOnSuccessListener {
-                if (it.exists()){
-                    val pets = it.children.map { it.getValue(Pet::class.java)!! }
+                bookingList = getBookingsForClinic(dbReference, clinicId)
+                Log.d("BOOKINGGlobalScope", bookingList.toString())
+
+                val petsSnapshot = dbReference.child("Pets").child(actualUser).get().await()
+                if (petsSnapshot.exists()) {
+                    val pets = petsSnapshot.children.map { it.getValue(Pet::class.java)!! }
                     val adapter = PetSpinnerAdapter(requireContext(), R.layout.item_pet, pets)
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     petSelectedSpinner.adapter = adapter
                 }
-            }.addOnFailureListener {
-                Log.e("ERROR", it.message.toString())
-            }
 
-        for (booking in bookingList){
-            ocupatedHours.add(booking.startHour)
-        }
-
-        petSelectedSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                pet = parent?.getItemAtPosition(position) as Pet
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                pet = Pet()
-            }
-        }
-
-        var hours = resources.getStringArray(R.array.booking_hours_array)
-        var flterList = mutableListOf<String>()
-        for (hour in hours){
-            if (!ocupatedHours.contains(hour)){
-                flterList.add(hour)
-                Log.d("HOUR", hour)
-            }
-        }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, flterList)
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        startHourSpinner.adapter = adapter
-
-        startHourSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (ocupatedHours.contains(parent?.getItemAtPosition(position).toString())){
-                    Toast.makeText(context, "Esta hora ya está reservada", Toast.LENGTH_SHORT).show()
-                    return
+                Log.d("BOOKING", bookingList.toString())
+                for (booking in bookingList) {
+                    ocupatedHours.add(booking.startHour)
                 }
-                startHour = parent?.getItemAtPosition(position).toString()
-            }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                startHour = ""
-            }
-        }
+                val hours = resources.getStringArray(R.array.booking_hours_array)
+                val flterList = mutableListOf<String>()
+                for (hour in hours) {
+                    if (!ocupatedHours.contains(hour)) {
+                        flterList.add(hour)
+                        Log.d("HOUR", hour)
+                    }
+                }
+                val hoursAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, flterList)
+                hoursAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                startHourSpinner.adapter = hoursAdapter
 
-        ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.booking_types_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            reasonSpinner.adapter = adapter
-        }
+                startHourSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        if (ocupatedHours.contains(parent?.getItemAtPosition(position).toString())) {
+                            Toast.makeText(context, "Esta hora ya está reservada", Toast.LENGTH_SHORT).show()
+                            return
+                        }
+                        startHour = parent?.getItemAtPosition(position).toString()
+                    }
 
-        reasonSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                reason = parent?.getItemAtPosition(position).toString()
-            }
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                        startHour = ""
+                    }
+                }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                reason = ""
+                ArrayAdapter.createFromResource(
+                    requireContext(),
+                    R.array.booking_types_array,
+                    android.R.layout.simple_spinner_item
+                ).also { adapter ->
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    reasonSpinner.adapter = adapter
+                }
+
+                reasonSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        reason = parent?.getItemAtPosition(position).toString()
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                        reason = ""
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.e("ERROR", e.message.toString())
             }
         }
 
         val addPet = view.findViewById<AppCompatButton>(R.id.addBookingButton)
-
         addPet.setOnClickListener {
-            if (bookingDate == "" || startHour == "" || pet.id == "" || reason == ""){
+            if (bookingDate == "" || startHour == "" || pet.id == "" || reason == "") {
                 Toast.makeText(context, "Por favor llene todos los campos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            }else{
-                var bookingId = dbReference.child("Bookings").push().key
-                var booking = Booking(bookingId!!,reason,bookingDate,startHour,clinicId,FirebaseAuth.getInstance().uid.toString(),pet.id,user.img)
-                GlobalScope.launch {
-                    Utilities.saveBooking(booking,dbReference)
-                    GlobalScope.launch(Dispatchers.Main) {
+            } else {
+                val bookingId = dbReference.child("Bookings").push().key
+                val booking = Booking(bookingId!!, reason, bookingDate, startHour, clinicId, FirebaseAuth.getInstance().uid.toString(), pet.id, user.img)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    Utilities.saveBooking(booking, dbReference)
+                    withContext(Dispatchers.Main) {
                         Toast.makeText(context, "Reserva realizada con éxito", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -204,5 +198,31 @@ class ClientBookingFragment : Fragment() {
                 println("Error al obtener las reservas: ${databaseError.message}")
             }
         })
+    }
+
+    suspend fun getBookingsForClinic(dbReference: DatabaseReference, clinicId: String): MutableList<Booking> {
+        return suspendCancellableCoroutine { continuation ->
+            val bookingsRef = dbReference.child("Bookings").child(clinicId)
+
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var bookingList = mutableListOf<Booking>()
+                    if (snapshot.exists()) {
+                        bookingList = snapshot.children.mapNotNull { it.getValue(Booking::class.java) }.toMutableList()
+                    }
+                    continuation.resume(bookingList)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    continuation.resumeWithException(error.toException())
+                }
+            }
+
+            bookingsRef.addListenerForSingleValueEvent(listener)
+
+            continuation.invokeOnCancellation {
+                bookingsRef.removeEventListener(listener)
+            }
+        }
     }
 }
