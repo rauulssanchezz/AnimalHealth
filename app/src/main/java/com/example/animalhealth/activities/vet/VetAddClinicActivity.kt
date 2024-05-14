@@ -1,20 +1,22 @@
-package com.example.animalhealth.fragments.vet
+package com.example.animalhealth.activities.vet
 
+import android.content.Intent
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.animalhealth.R
+import com.example.animalhealth.activities.VetMainActivity
 import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.Utilities
 import com.google.firebase.Firebase
@@ -28,7 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
-class VetAddClinicFragment : Fragment() {
+class VetAddClinicActivity : AppCompatActivity() {
     private lateinit var photo: ImageView
     private var urlPhoto: Uri? = null
     private lateinit var dbRef: DatabaseReference
@@ -45,24 +47,20 @@ class VetAddClinicFragment : Fragment() {
     private var name = ""
     private var location = ""
     private var phone = ""
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_vet_add_clinic, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_vet_add_clinic)
 
         dbRef = FirebaseDatabase.getInstance().reference
-        photo = view.findViewById(R.id.addPhoto)
-        job=Job()
+        photo = findViewById(R.id.addPhoto)
+        job= Job()
 
-        navController = findNavController()
 
-        buttonSave = view.findViewById(R.id.buttonSave)
-        nameEditText = view.findViewById(R.id.editTextName)
-        streetEditText = view.findViewById(R.id.editTextStreet)
-        postalCodeEditText = view.findViewById(R.id.editTextPostalCode)
-        phoneEditText = view.findViewById(R.id.editTextPhone)
+        buttonSave = findViewById(R.id.buttonSave)
+        nameEditText = findViewById(R.id.editTextName)
+        streetEditText = findViewById(R.id.editTextStreet)
+        postalCodeEditText = findViewById(R.id.editTextPostalCode)
+        phoneEditText = findViewById(R.id.editTextPhone)
 
         buttonSave.setOnClickListener {
             if (nameEditText.text.toString().isEmpty() || streetEditText.text.toString()
@@ -76,7 +74,7 @@ class VetAddClinicFragment : Fragment() {
                 name = nameEditText.text.toString()
                 phone = phoneEditText.text.toString()
                 location = streetEditText.text.toString() + " " + postalCodeEditText.text.toString()
-                val geocoder = Geocoder(requireContext(), Locale.getDefault())
+                val geocoder = Geocoder(applicationContext, Locale.getDefault())
                 try {
                     val addresses = geocoder.getFromLocationName(location, 1)
                     if (addresses!!.isNotEmpty()) {
@@ -91,22 +89,25 @@ class VetAddClinicFragment : Fragment() {
                             if (urlPhoto!=null) {
                                 val urlPhotoFb = Utilities.savePhoto(urlPhoto!!, "Clinics", clinicId!!)
                                 val clinic =
-                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,Firebase.auth.currentUser!!.uid, urlPhotoFb,phone)
+                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,
+                                        Firebase.auth.currentUser!!.uid, urlPhotoFb,phone)
                                 Utilities.createClinic(clinic, dbRef)
                             }else{
                                 val clinic =
-                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,Firebase.auth.currentUser!!.uid,phone)
+                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,
+                                        Firebase.auth.currentUser!!.uid,phone)
                                 Utilities.createClinic(clinic, dbRef)
                             }
 
 
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(
-                                    requireContext(),
+                                    applicationContext,
                                     "Clinica añadida",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                navController.navigate(R.id.vetAddClinicFragment_to_vetClinicFragment)
+                                val intent = Intent(applicationContext, VetMainActivity::class.java)
+                                startActivity(intent)
                             }
                         }
                     }
@@ -121,8 +122,6 @@ class VetAddClinicFragment : Fragment() {
         photo.setOnClickListener {
             galeryAcces.launch("image/*")
         }
-
-        return view
     }
     private val galeryAcces = registerForActivityResult(ActivityResultContracts.GetContent())
     { uri: Uri? ->

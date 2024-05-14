@@ -156,6 +156,7 @@ class RegisterFragment : Fragment() {
                                             "Usuario registrado",
                                             Toast.LENGTH_SHORT
                                         ).show()
+                                        auth.updateCurrentUser(FirebaseAuth.getInstance().currentUser!!)
                                         navController.navigate(R.id.action_registerFragment_to_loginFragment)
                                     } else {
                                         Toast.makeText(

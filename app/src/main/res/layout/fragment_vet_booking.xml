@@ -34,6 +34,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
+    <CalendarView
+        android:id="@+id/bookingCalendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/vetBookingRecyclerView"
         app:layout_constraintTop_toBottomOf="@id/bookingCalendar"
