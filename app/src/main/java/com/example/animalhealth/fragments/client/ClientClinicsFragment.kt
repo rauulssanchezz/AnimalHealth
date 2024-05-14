@@ -114,24 +114,37 @@ class ClientClinicsFragment : Fragment() {
                         true
                     }
                     R.id.ubication -> {
-                        val latitud = sharedPreferences.getString("latitud", "0.0")!!.toDouble()
-                        val longitud = sharedPreferences.getString("longitud", "0.0")!!.toDouble()
+                        val latitud = sharedPreferences.getString("latitud", "0.0")?.toDouble()
+                        val longitud = sharedPreferences.getString("longitud", "0.0")?.toDouble()
                         Log.d("Latitud", latitud.toString())
-                        for (clinic in list) {
-                            val distancia = Utilities.calcularDistancia(latitud, longitud, clinic.latitude, clinic.longitude)
-                            if (distancia < 30) {
-                                newList.add(clinic)
+                        if (latitud == 0.0 && longitud == 0.0) {
+                            Toast.makeText(requireContext(), "No se ha podido obtener la ubicación", Toast.LENGTH_SHORT).show()
+                        }else {
+                            for (clinic in list) {
+                                val distancia = Utilities.calcularDistancia(
+                                    latitud!!,
+                                    longitud!!,
+                                    clinic.latitude,
+                                    clinic.longitude
+                                )
+                                if (distancia < 30) {
+                                    newList.add(clinic)
+                                }
                             }
+                            if (newList.isEmpty()) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "No hay clínicas cercanas",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                list.clear()
+                                list.addAll(newList)
+                                newList.clear()
+                                adapter.notifyDataSetChanged()
+                            }
+                            Log.d("Lista", newList.toString())
                         }
-                        if (newList.isEmpty()) {
-                            Toast.makeText(requireContext(), "No hay clínicas cercanas", Toast.LENGTH_SHORT).show()
-                        }else{
-                            list.clear()
-                            list.addAll(newList)
-                            newList.clear()
-                            adapter.notifyDataSetChanged()
-                        }
-                        Log.d("Lista", newList.toString())
                         true
                     }
                     R.id.reviews -> {

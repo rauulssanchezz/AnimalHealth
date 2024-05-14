@@ -47,13 +47,17 @@ class ClientMainActivity : AppCompatActivity() {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
                     // Aquí tienes la ubicación actual
-                    Log.d("Ubicación", "Ubicación obtenida")
-                        val latitud = location?.latitude
-                        val longitud = location?.longitude
-                        Log.d("Ubicación", "Latitud: $latitud, Longitud: $longitud")
-                        // Usa la latitud y longitud aquí según sea necesario
-                        sharedPreferences.edit().putString("latitud", latitud.toString()).apply()
-                        sharedPreferences.edit().putString("longitud", longitud.toString()).apply()
+                Log.d("Ubicación", "Ubicación obtenida")
+                val latitud = location?.latitude
+                val longitud = location?.longitude
+                Log.d("Ubicación", "Latitud: $latitud, Longitud: $longitud")
+                // Usa la latitud y longitud aquí según sea necesario
+                if (latitud != null && longitud != null){
+                    sharedPreferences.edit().putString("latitud", latitud.toString()).apply()
+                    sharedPreferences.edit().putString("longitud", longitud.toString()).apply()
+                }else{
+                    alertDialog(this,"No se pudo obtener la ubicación, por favor verifique que los permisos de ubicación o la ubicación de tu dispositivo estén activados","Error de ubicación")
+                }
                 }
         } else {
             // Si los permisos de ubicación no están otorgados, solicítalos al usuario
@@ -76,14 +80,14 @@ class ClientMainActivity : AppCompatActivity() {
                 // Acción cuando se hace clic en el botón Aceptar
                 if (title=="Salir de AnimalHealth") {
                     finishAffinity()
-                }else{
+                }else if (title=="Permisos de ubicación"){
                     openAppSettings()
                 }
             }
             setNegativeButton("Cancelar") { dialog, which ->
                 // Acción cuando se hace clic en el botón Cancelar
                 dialog.dismiss()
-                if (title=="Permisos de ubicación") {
+                if (title=="Permisos de ubicación" || title=="Error de ubicación") {
                     finishAffinity()
                 }
             }

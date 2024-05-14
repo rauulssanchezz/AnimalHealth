@@ -3,10 +3,12 @@ package com.example.animalhealth.fragments.common
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.animalhealth.R
 import com.example.animalhealth.activities.client.ClientMainActivity
 import com.example.animalhealth.activities.VetMainActivity
@@ -42,9 +44,12 @@ class LoadingFragment : Fragment() {
         val sharedPreferences = requireContext().getSharedPreferences("sharedPreferences",
             Context.MODE_PRIVATE
         )
-        CoroutineScope(Dispatchers.IO).launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             user = Utilities.obtainUser(db_ref)
             clinic = getClinicForUser(db_ref,user)
+            while (user == null) {
+                user = Utilities.obtainUser(db_ref)
+            }
             with(sharedPreferences.edit()){
                 putString("Name",user?.name)
                 putString("Email",user?.email)
@@ -53,19 +58,18 @@ class LoadingFragment : Fragment() {
                 putString("Img",user?.img)
                 apply()
             }
-            withContext(Dispatchers.Main) {
-                if (user?.type == ( "Veterinario")) {
-                    if (clinic != null) {
-                        val intent = Intent(requireContext(), VetMainActivity::class.java)
-                        startActivity(intent)
-                    }else{
-                        val intent = Intent(requireContext(), VetAddClinicActivity::class.java)
-                        startActivity(intent)
-                    }
-                } else {
-                    val intent = Intent(requireContext(), ClientMainActivity::class.java)
+            Log.d("Type", user!!.type)
+            if (user?.type == ( "Veterinario")) {
+                if (clinic != null) {
+                    val intent = Intent(requireContext(), VetMainActivity::class.java)
+                    startActivity(intent)
+                }else{
+                    val intent = Intent(requireContext(), VetAddClinicActivity::class.java)
                     startActivity(intent)
                 }
+            } else {
+                val intent = Intent(requireContext(), ClientMainActivity::class.java)
+                startActivity(intent)
             }
         }
 
