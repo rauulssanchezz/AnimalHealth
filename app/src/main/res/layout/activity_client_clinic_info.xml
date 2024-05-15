@@ -80,7 +80,7 @@
         android:id="@+id/separator2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        app:layout_constraintTop_toBottomOf="@id/reserveButton"
+        app:layout_constraintTop_toBottomOf="@id/clinicRate"
         app:layout_constraintBottom_toTopOf="@id/textReseñas"
         android:backgroundTint="@color/gray"
         android:layout_marginVertical="15dp"
@@ -100,8 +100,9 @@
         android:id="@+id/clinicRate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@+id/reserveButton"
+        app:layout_constraintTop_toBottomOf="@+id/clinicPhone"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:scaleX="0.5"
         android:scaleY="0.5"
         android:progressTint="@color/yellow"
@@ -110,29 +111,14 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reviewsRecyclerView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/textReseñas"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_review"
         />
-
-
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/reserveButton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/clinicPhone"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginVertical="15dp"
-        android:text="Reservar Cita"
-        android:backgroundTint="@color/colorPrimary"
-        android:padding="10dp"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

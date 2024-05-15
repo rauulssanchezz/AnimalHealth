@@ -139,7 +139,7 @@ class Utilities {
         }
 
         suspend fun saveBooking(booking:Booking,db_ref:DatabaseReference){
-            db_ref.child("Bookings").child(booking.clinicId).child(booking.id).setValue(booking).await()
+            db_ref.child("Bookings").child(booking.id).setValue(booking).await()
         }
 
         suspend fun saveReview(reviews: Reviews,db_ref:DatabaseReference){

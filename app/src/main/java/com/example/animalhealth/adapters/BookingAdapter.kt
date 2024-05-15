@@ -60,34 +60,52 @@ class BookingAdapter(private val books_list:MutableList<Booking>): RecyclerView.
         val time: TextView =itemView.findViewById(R.id.itemBookingTime)
         val photo : ImageView = itemView.findViewById(R.id.itemBookingUserPhoto)
         val reason : TextView = itemView.findViewById(R.id.itemBookingReason)
+        val date : TextView = itemView.findViewById(R.id.itemBookingDate)
+        val clinic : TextView = itemView.findViewById(R.id.itemBookingClinic)
+        val cancel : AppCompatButton = itemView.findViewById(R.id.itemBookingCancelButton)
     }
 
 
     override fun onBindViewHolder(holder: BookingViewHolder, position: Int) {
-        val actual_item=filter_list[position]
-        var ownerName=""
-        holder.time.text=actual_item.startHour
-        holder.reason.text=actual_item.bookingReason
+        val actual_item = filter_list[position]
 
-        dbRef.child("Users").child(actual_item.ownerId).get().addOnSuccessListener {
-            val user = it.getValue(User::class.java)
-            ownerName = user?.name.toString()
+        // Establecer valores iniciales o por defecto
+        holder.time.text = actual_item.startHour
+        holder.reason.text = actual_item.bookingReason
+        holder.date.text = actual_item.date
+
+        holder.cancel.setOnClickListener {
+            dbRef.child("Bookings").child(actual_item.id).removeValue()
+            filter_list.removeAt(position)
+            notifyItemRemoved(position)
         }
 
-        holder.ownerName.text = ownerName
+        // Obtener y establecer el nombre del dueño
+        dbRef.child("Users").child(actual_item.ownerId).get().addOnSuccessListener { snapshot ->
+            val user = snapshot.getValue(User::class.java)
+            holder.ownerName.text = user?.name.toString()
+        }
 
-        dbRef.child("Pets").child(actual_item.petId).get().addOnSuccessListener {
-            val pet = it.getValue(Pet::class.java)
+        // Obtener y establecer el nombre de la clínica
+        dbRef.child("Clinics").child(actual_item.clinicId).get().addOnSuccessListener { snapshot ->
+            val clinic = snapshot.getValue(Clinic::class.java)
+            holder.clinic.text = clinic?.name
+        }
+
+        // Obtener y establecer los detalles de la mascota
+        dbRef.child("Pets").child(actual_item.petId).get().addOnSuccessListener { snapshot ->
+            val pet = snapshot.getValue(Pet::class.java)
             holder.petName.text = pet?.name
             holder.petBreed.text = pet?.breed
         }
 
-        val URL:String? = when (actual_item.ownerPhoto){
-            ""->null
-            else->actual_item.ownerPhoto
-        }
-
-        Glide.with(context).load(URL).apply(Utilities.glideOptions(context)).transition(Utilities.transition).into(holder.photo)
+        // Cargar la imagen del dueño usando Glide
+        val photoUrl = if (actual_item.ownerPhoto.isNullOrEmpty()) null else actual_item.ownerPhoto
+        Glide.with(context)
+            .load(photoUrl)
+            .apply(Utilities.glideOptions(context))
+            .transition(Utilities.transition)
+            .into(holder.photo)
     }
 
     override fun getFilter(): Filter {

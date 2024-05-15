@@ -3,6 +3,7 @@ package com.example.animalhealth.activities.client
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
@@ -32,11 +33,10 @@ class ClientClinicInfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_client_clinic_info)
 
-        var dbRef = FirebaseDatabase.getInstance().reference
-        var clinic = intent.getParcelableExtra<Clinic>("clinic")
+        val dbRef = FirebaseDatabase.getInstance().reference
+        val clinic = intent.getParcelableExtra<Clinic>("clinic")
 
         val backButton = findViewById<ImageView>(R.id.backButton)
-
         val name = findViewById<TextView>(R.id.clinicName)
         val address = findViewById<TextView>(R.id.clinicAddress)
         val rate = findViewById<RatingBar>(R.id.clinicRate)
@@ -45,10 +45,14 @@ class ClientClinicInfoActivity : AppCompatActivity() {
         val reviewsButton = findViewById<TextView>(R.id.reviewButton)
         val reviewCardView = findViewById<CardView>(R.id.writeReviewCard)
         val saveReview = findViewById<TextView>(R.id.saveReview)
-        var list = mutableListOf<Reviews>()
-        var recycler = findViewById<RecyclerView>(R.id.reviewsRecyclerView)
-        var adapter: ReviewsAdapter
+        val list = mutableListOf<Reviews>()
+        val recycler = findViewById<RecyclerView>(R.id.reviewsRecyclerView)
+        val sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE)
+        val userName = sharedPreferences.getString("Name", "")!!
+        val userImg = sharedPreferences.getString("Img", "")!!
+        val userId = FirebaseAuth.getInstance().uid!!
 
+        var adapter: ReviewsAdapter
 
         val URL: String? = when (clinic!!.photo) {
             "" -> null
@@ -61,9 +65,6 @@ class ClientClinicInfoActivity : AppCompatActivity() {
         name.text = clinic.name
         address.text = clinic.location
         phone.text = clinic.phone
-
-
-
 
         dbRef.child("Reviews").child(clinic.id!!)
             .addValueEventListener(object : ValueEventListener {
@@ -99,7 +100,6 @@ class ClientClinicInfoActivity : AppCompatActivity() {
         recycler.adapter = adapter
         recycler.layoutManager = LinearLayoutManager(applicationContext)
 
-
         rate.rating = clinic.rate
         Log.d("ClinicRate", rate.rating.toString())
 
@@ -108,49 +108,61 @@ class ClientClinicInfoActivity : AppCompatActivity() {
         }
 
         reviewsButton.setOnClickListener {
-            reviewCardView.visibility = CardView.VISIBLE
-            reviewsButton.visibility = AppCompatButton.GONE
-            saveReview.visibility = AppCompatButton.VISIBLE
+            reviewCardView.visibility = View.VISIBLE
+            reviewsButton.visibility = View.GONE
+            saveReview.visibility = View.VISIBLE
             val reviewRating = findViewById<RatingBar>(R.id.reviewRatingBar)
-            var reviewRate = findViewById<RatingBar>(R.id.reviewRatingBar)
-            var review = Reviews()
-            var userImg = ""
-            var userName = ""
-            var id = ""
+
             saveReview.setOnClickListener {
                 Log.d("Guardar", "Guardando valoración")
-                if (reviewRate.rating == 0.0f) {
-                    Log.d("Guardar", "No puedes guardar una valoración vacia")
+                if (reviewRating.rating == 0.0f) {
+                    Log.d("Guardar", "No puedes guardar una valoración vacía")
                     Toast.makeText(
                         this,
-                        "No puedes guardar una valoración vacia",
+                        "No puedes guardar una valoración vacía",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    id = dbRef.push().key!!
-                    var sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE)
-                    userName = sharedPreferences.getString("Name","")!!
-                    userImg = sharedPreferences.getString("Img","")!!
-                    Log.d("Guardar", "Guardando valoración correctamente")
-                    review = Reviews(
-                        id,
-                        clinic?.id,
-                        FirebaseAuth.getInstance().uid,
-                        userName,
-                        reviewRating.rating,
-                        userImg
-                    )
-                    reviewCardView.visibility = CardView.GONE
-                    Toast.makeText(this, "Valoración guardada", Toast.LENGTH_SHORT).show()
-                    GlobalScope.launch {
-                        Utilities.saveReview(review, dbRef)
-                    }
-                    Log.d("Guardar", "Se ha guardado")
-                    reviewsButton.visibility = AppCompatButton.VISIBLE
-                    saveReview.visibility = AppCompatButton.GONE
+                    dbRef.child("Reviews").child(clinic.id!!)
+                        .orderByChild("userId")
+                        .equalTo(userId)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                var reviewId = dbRef.push().key!!
+                                if (snapshot.exists()) {
+                                    for (reviewSnapshot in snapshot.children) {
+                                        reviewId = reviewSnapshot.key!!
+                                    }
+                                }
+
+                                val review = Reviews(
+                                    reviewId,
+                                    clinic.id,
+                                    userId,
+                                    userName,
+                                    reviewRating.rating,
+                                    userImg
+                                )
+
+                                dbRef.child("Reviews").child(clinic.id!!).child(reviewId).setValue(review)
+                                    .addOnCompleteListener {
+                                        if (it.isSuccessful) {
+                                            reviewCardView.visibility = View.GONE
+                                            Toast.makeText(this@ClientClinicInfoActivity, "Valoración guardada", Toast.LENGTH_SHORT).show()
+                                            reviewsButton.visibility = View.VISIBLE
+                                            saveReview.visibility = View.GONE
+                                        } else {
+                                            Toast.makeText(this@ClientClinicInfoActivity, "Error al guardar la valoración", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                Log.e("Firebase", "Error al verificar las reseñas existentes", error.toException())
+                            }
+                        })
                 }
             }
-
         }
     }
 }

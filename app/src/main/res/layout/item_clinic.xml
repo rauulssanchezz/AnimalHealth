@@ -24,7 +24,7 @@
             android:layout_marginHorizontal="15dp"
             android:src="@drawable/icons8_cl_nica_96"
             android:adjustViewBounds="true"
-            android:scaleType="centerInside"
+            android:scaleType="centerCrop"
             />
 
         <androidx.cardview.widget.CardView

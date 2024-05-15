@@ -15,6 +15,7 @@ firebaseDatabaseKtx = "20.3.1"
 firebaseStorageKtx = "20.3.0"
 swiperefreshlayout = "1.1.0"
 playServicesLocation = "21.2.0"
+carUiLib = "2.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -31,6 +32,7 @@ firebase-database-ktx = { group = "com.google.firebase", name = "firebase-databa
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+car-ui-lib = { group = "com.android.car.ui", name = "car-ui-lib", version.ref = "carUiLib" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -55,7 +55,6 @@
         <item>Desparasitación</item>
         <item>Operación</item>
         <item>Revisión</item>
-        <item>Urgencia</item>
     </string-array>
 
     <string-array name="booking_hours_array">
@@ -73,5 +72,7 @@
         <item>19:00</item>
         <item>20:00</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

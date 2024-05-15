@@ -45,7 +45,7 @@ class VetBookingFragment : Fragment() {
             clinic = getClinicForUser(dbRef, FirebaseAuth.getInstance().currentUser!!.uid)
 
             Log.d("ClinicId", clinic?.id.toString())
-            dbRef.child("Bookings").child(clinic?.id.toString())
+            dbRef.child("Bookings")
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         bookingList.clear()
@@ -53,7 +53,9 @@ class VetBookingFragment : Fragment() {
                             ->
                             val pojo_clinic = hijo?.getValue(Booking::class.java)
                             Log.d("Booking", pojo_clinic.toString())
-                            bookingList.add(pojo_clinic!!)
+                            if (pojo_clinic?.clinicId == clinic?.id) {
+                                bookingList.add(pojo_clinic!!)
+                            }
                         }
                         recycler.adapter?.notifyDataSetChanged()
                     }

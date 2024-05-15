@@ -11,7 +11,7 @@
         tools:layout="@layout/fragment_client_clinics" >
         <action
             android:id="@+id/action_clientClinicsFragment_to_clientBookingFragment"
-            app:destination="@id/clientBookingFragment"
+            app:destination="@id/clientAddBookingFragment"
             />
     </fragment>
 
@@ -47,10 +47,21 @@
         />
 
     <fragment
+        android:id="@+id/clientAddBookingFragment"
+        android:name="com.example.animalhealth.fragments.client.ClientAddBookingFragment"
+        android:label="fragment_clientBooking"
+        tools:layout="@layout/fragment_client_add_booking"
+        >
+        <action
+            android:id="@+id/action_clientAddBookingFragment_to_clientClinicsFragment"
+            app:destination="@id/clientClinicsFragment"
+            />
+    </fragment>
+
+    <fragment
         android:id="@+id/clientBookingFragment"
         android:name="com.example.animalhealth.fragments.client.ClientBookingFragment"
         android:label="fragment_clientBooking"
-        tools:layout="@layout/fragment_client_booking"
-        >
-    </fragment>
+        tools:layout="@layout/fragment_client_booking" />
+
 </navigation>

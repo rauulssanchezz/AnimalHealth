@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.animalhealth"
-        minSdk = 27
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.firebase.storage.ktx)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.play.services.location)
+    implementation(libs.car.ui.lib)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

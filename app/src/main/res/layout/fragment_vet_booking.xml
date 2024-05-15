@@ -45,8 +45,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/vetBookingRecyclerView"
         app:layout_constraintTop_toBottomOf="@id/bookingCalendar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_booking"
         />
 
@@ -61,13 +64,5 @@
         android:backgroundTint="@color/colorPrimary"
         app:cardCornerRadius="10dp"
         >
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_add_circle_outline_24"
-            android:adjustViewBounds="true"
-            android:layout_marginVertical="5dp"
-            android:layout_marginHorizontal="5dp"
-            />
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
