@@ -14,6 +14,7 @@ import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
@@ -35,6 +36,9 @@ class ClientMainActivity : AppCompatActivity() {
     private val REQUEST_CHECK_SETTINGS = 100
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE)
+        val darkMode = sharedPreferences.getInt("Theme", AppCompatDelegate.MODE_NIGHT_NO)
+        AppCompatDelegate.setDefaultNightMode(darkMode)
         setContentView(R.layout.activity_client_main)
 
         val navHostFragment=
@@ -43,7 +47,6 @@ class ClientMainActivity : AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.client_bottom_navigation_view)
         bottomNavigationView.setupWithNavController(navController)
 
-        sharedPreferences = getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         Log.d("Ubicación", "Obteniendo ubicación")
         obtenerUbicacion()

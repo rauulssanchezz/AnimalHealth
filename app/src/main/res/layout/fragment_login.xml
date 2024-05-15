@@ -65,11 +65,10 @@
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:text="Iniciar Sesión"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/colorPrimary"
         app:layout_constraintTop_toBottomOf="@id/textInputLayoutPassword"
         app:layout_constraintStart_toStartOf="@id/textInputLayoutPassword"
         app:layout_constraintEnd_toEndOf="@id/textInputLayoutPassword"
+        android:textColor="@color/colorButtonText"
         android:layout_marginTop="16dp"/>
 
     <TextView

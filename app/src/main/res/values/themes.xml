@@ -1,11 +1,31 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.AnimalHealth" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorSurface">@color/colorPrimary</item>
-        <item name="colorOnSurface">@color/white</item>
-        <item name="android:windowBackground">@color/white</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
+
+        <!-- Establecimiento de colores para botones, BottomNavigationView y CardView -->
+        <item name="colorButtonNormal">@color/colorButton</item>
+        <item name="colorControlNormal">@color/colorButton</item> <!-- Para widgets que usan el tema AppCompat -->
+        <item name="colorControlActivated">@color/colorButton</item>
+        <item name="colorControlHighlight">@color/colorButton</item>
+        <item name="cardBackgroundColor">@color/colorCardView</item>
+
+        <!-- Personalización del texto de los botones -->
+        <item name="colorOnSurface">@color/colorButtonText</item>
+
+        <!-- Personalización del tint para ProgressBar de RatingBar -->
+        <item name="android:progressTint">@color/colorProgressBar</item>
+
+        <!-- Otros atributos del tema -->
+        <!-- Por ejemplo, personalización de la barra de estado -->
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+
+        <!-- Personalización de los widgets, si es necesario -->
+        <!-- Por ejemplo, cambiar el color de la barra de desplazamiento -->
+        <item name="android:scrollbarThumbVertical">@color/colorPrimary</item>
     </style>
 
     <style name="Theme.AnimalHealth" parent="Base.Theme.AnimalHealth" />

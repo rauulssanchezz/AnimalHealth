@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="colorPrimary">#2196F3</color>
-    <color name="colorAccent">#FF80CBC4</color>
-    <color name="darkThemeColor">#333333</color>
-    <color name="gray">#EB1D1B1B</color>
-    <color name="yellow">#FFC107</color>
+    <color name="colorPrimary">#2196F3</color> <!-- Azul principal -->
+    <color name="colorPrimaryDark">#1976D2</color> <!-- Azul oscuro -->
+    <color name="colorAccent">#FF5722</color> <!-- Naranja para un toque de contraste -->
+    <color name="colorBackground">#FFFFFFFF</color> <!-- Fondo blanco -->
+    <color name="colorButton">#2196F3</color> <!-- Botón azul -->
+    <color name="colorBottomNavigation">#2196F3</color> <!-- BottomNavigationView azul -->
+    <color name="colorCardView">#2196F3</color> <!-- CardView azul -->
+    <color name="colorButtonText">#FFFFFFFF</color> <!-- Texto de botón blanco -->
+    <color name="colorProgressBar">#FFC107</color> <!-- Amarillo para ProgressBar de RatingBar -->
+    <color name="black">#000000</color>
+
+    <color name="colorPrimaryNight">#1976D2</color> <!-- Azul oscuro -->
+    <color name="colorPrimaryDarkNight">#1565C0</color> <!-- Azul más oscuro -->
+    <color name="colorAccentNight">#FFA726</color> <!-- Naranja oscuro -->
+    <color name="colorBackgroundNight">#212121</color> <!-- Fondo gris oscuro -->
+    <color name="colorButtonNight">#2196F3</color> <!-- Botón azul claro -->
+    <color name="colorBottomNavigationNight">#2196F3</color> <!-- BottomNavigationView azul claro -->
+    <color name="colorCardViewNight">#2196F3</color> <!-- CardView azul claro -->
+    <color name="colorButtonTextNight">#FFFFFF</color> <!-- Texto de botón blanco -->
+    <color name="colorProgressBarNight">#FFC107</color> <!-- Amarillo para ProgressBar de RatingBar -->
+
+
 </resources>

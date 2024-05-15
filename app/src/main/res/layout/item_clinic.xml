@@ -32,7 +32,6 @@
             android:layout_height="1dp"
             app:layout_constraintTop_toBottomOf="@id/clinicPhoto"
             app:layout_constraintBottom_toTopOf="@id/clinicName"
-            android:backgroundTint="@color/gray"
             android:layout_marginHorizontal="15dp"
             />
 
@@ -86,7 +85,6 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="@id/reserveButton"
                 app:layout_constraintStart_toStartOf="parent"
-                android:progressTint="@color/yellow"
                 android:scaleX="0.5"
                 android:scaleY="0.5"
                 android:isIndicator="true"
@@ -96,14 +94,13 @@
             android:id="@+id/reserveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorPrimary"
             android:text="Reservar Cita"
-            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:padding="15dp"
             android:layout_marginHorizontal="15dp"
             android:layout_marginVertical="10dp"
+            android:textColor="@color/colorButtonText"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

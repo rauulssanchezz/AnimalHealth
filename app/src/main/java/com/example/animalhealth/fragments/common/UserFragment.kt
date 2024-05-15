@@ -11,9 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.app.ActivityCompat.recreate
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.animalhealth.R
@@ -32,6 +35,7 @@ class UserFragment : Fragment() {
     private lateinit var photo : ImageView
     private var url_photo: Uri? = null
     var url_img:String=""
+    private lateinit var sharedPreferences: android.content.SharedPreferences
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,7 +43,7 @@ class UserFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_user, container, false)
 
-        val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+        sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
         photo = view.findViewById<ImageView>(R.id.userPhoto)
         val userNameEditText = view.findViewById<TextInputEditText>(R.id.userNameEditText)
         val userEmailEditText = view.findViewById<TextInputEditText>(R.id.userEmailEditText)
@@ -47,6 +51,7 @@ class UserFragment : Fragment() {
         val userPasswordEditText = view.findViewById<TextInputEditText>(R.id.userPasswordEditText)
         val saveChangesButton = view.findViewById<AppCompatButton>(R.id.saveChangesButton)
         val logOutButton = view.findViewById<Button>(R.id.logOutButton)
+        val settingsButton = view.findViewById<ImageView>(R.id.settingsButton)
 
         url_img = sharedPreferences.getString("Img", "").toString()
         var beforeUrl_img = url_img.toString()
@@ -58,6 +63,11 @@ class UserFragment : Fragment() {
         var name = beforeName
 
         val user = FirebaseAuth.getInstance().currentUser
+
+        settingsButton.setOnClickListener {
+            Log.d("SETTINGS", "SETTINGS")
+            showThemeMenu(it)
+        }
 
         Glide.with(requireContext()).load(beforeUrl_img).apply(Utilities.glideOptions(requireContext())).transition(Utilities.transition).into(photo)
 
@@ -130,5 +140,36 @@ class UserFragment : Fragment() {
             url_photo = uri
             photo.setImageURI(uri)
         }
+    }
+    private fun showThemeMenu(anchorView: View) {
+        val popupMenu = PopupMenu(requireContext(), anchorView)
+        popupMenu.menuInflater.inflate(R.menu.theme, popupMenu.menu)
+
+        val currentNightMode = AppCompatDelegate.getDefaultNightMode()
+        if (currentNightMode == AppCompatDelegate.MODE_NIGHT_NO) {
+            popupMenu.menu.findItem(R.id.nightMode)?.isVisible = true
+        } else {
+            popupMenu.menu.findItem(R.id.dayMode)?.isVisible = true
+        }
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.dayMode -> {
+                    // Cambiar al modo de día
+                    sharedPreferences.edit().putInt("Theme", AppCompatDelegate.MODE_NIGHT_NO).apply()
+                    recreate(requireActivity()) // Reinicia la actividad para aplicar el cambio de tema
+                    true
+                }
+                R.id.nightMode -> {
+                    // Cambiar al modo de noche
+                    sharedPreferences.edit().putInt("Theme", AppCompatDelegate.MODE_NIGHT_YES).apply()
+                    recreate(requireActivity()) // Reinicia la actividad para aplicar el cambio de tema
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.show()
     }
 }

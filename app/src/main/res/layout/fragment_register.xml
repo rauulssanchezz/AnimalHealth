@@ -122,11 +122,10 @@
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:text="Registrarse"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/colorPrimary"
         app:layout_constraintTop_toBottomOf="@id/type_spinner"
         app:layout_constraintStart_toStartOf="@id/type_spinner"
         app:layout_constraintEnd_toEndOf="@id/type_spinner"
+        android:textColor="@color/colorButtonText"
         android:layout_marginTop="16dp"/>
 
     <TextView

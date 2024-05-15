@@ -16,8 +16,7 @@
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_nav_client_menu"
         android:background="?attr/colorSurface"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
+        app:itemTextColor="@color/black"
         style="@style/Widget.Design.BottomNavigationView"
         />
 
