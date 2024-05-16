@@ -182,6 +182,7 @@ class ClientAddBookingFragment : Fragment() {
                     Utilities.saveBooking(booking, dbReference)
                     withContext(Dispatchers.Main) {
                         Toast.makeText(context, "Reserva realizada con éxito", Toast.LENGTH_SHORT).show()
+                        navController.navigate(R.id.action_clientAddBookingFragment_to_clientClinicsFragment)
                     }
                 }
             }

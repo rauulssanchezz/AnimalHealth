@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Toast
@@ -38,19 +39,22 @@ class ClientAddPetFragment : Fragment() {
     private lateinit var typeSpinner: Spinner
     private lateinit var breedSpinner: Spinner
     private lateinit var ilnessEditText: TextInputEditText
-    private lateinit var vacunesSpinner: Spinner
     private lateinit var ageEditText: TextInputEditText
     private lateinit var weightEditText: TextInputEditText
     private lateinit var savePet: Button
+
+    // Variables para los CheckBoxes
+    private lateinit var vaccineCheckBoxes: List<CheckBox>
 
     private var name = ""
     private var type = ""
     private var breed = ""
     private var ilness = ""
-    private var vacunes = ""
+    private var vaccines = ""
     private var age = ""
     private var weight = ""
     private var owner = ""
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,30 +62,35 @@ class ClientAddPetFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_client_add_pet, container, false)
 
-        navController = findNavController()
-
+        navController = requireParentFragment().findNavController()
         job = Job()
-
         db_ref = FirebaseDatabase.getInstance().reference
+
+        var pulsado = false
 
         photo = view.findViewById(R.id.addPhoto)
         nameEditText = view.findViewById(R.id.editTextName)
         typeSpinner = view.findViewById(R.id.spinnerType)
         breedSpinner = view.findViewById(R.id.spinnerBreed)
         ilnessEditText = view.findViewById(R.id.editTextIlness)
-        vacunesSpinner = view.findViewById(R.id.spinnerVacunes)
         ageEditText = view.findViewById(R.id.editTextAge)
         weightEditText = view.findViewById(R.id.editTextWeight)
         savePet = view.findViewById(R.id.buttonSave)
+
+        // Inicializar los CheckBoxes de vacunas
+        vaccineCheckBoxes = listOf(
+            view.findViewById(R.id.checkBoxVacuna1),
+            view.findViewById(R.id.checkBoxVacuna2),
+            view.findViewById(R.id.checkBoxVacuna3)
+            // Agrega más CheckBoxes según sea necesario
+        )
 
         ArrayAdapter.createFromResource(
             requireActivity(),
             R.array.species_array,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
-            // Specify the layout to use when the list of choices appears.
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner.
             typeSpinner.adapter = adapter
         }
 
@@ -101,184 +110,156 @@ class ClientAddPetFragment : Fragment() {
             }
         }
 
-            breedSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    breed = breedSpinner.selectedItem.toString()
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    breed = ""
-                }
+        breedSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                breed = breedSpinner.selectedItem.toString()
             }
 
-            ArrayAdapter.createFromResource(
-                requireActivity(),
-                R.array.vaccine_array,
-                android.R.layout.simple_spinner_item
-            ).also { adapter ->
-                // Specify the layout to use when the list of choices appears.
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                // Apply the adapter to the spinner.
-                vacunesSpinner.adapter = adapter
-            }
-
-            vacunesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    vacunes += vacunesSpinner.selectedItem.toString() + "\n"
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    vacunes = ""
-                }
-            }
-
-            savePet.setOnClickListener {
-                if (
-                    !nameEditText.text.isNullOrBlank() && type != ""
-                    && breed != "" && !ilnessEditText.text.isNullOrBlank()
-                    && vacunes != "" && !ageEditText.text.isNullOrBlank()
-                    && !weightEditText.text.isNullOrBlank()
-                ) {
-
-                    name = nameEditText.text.toString().trim().capitalize()
-                    ilness = ilnessEditText.text.toString().trim().capitalize()
-                    age = ageEditText.text.toString().trim().capitalize()
-                    weight = weightEditText.text.toString().trim().capitalize()
-                    owner = FirebaseAuth.getInstance().currentUser!!.uid.toString()
-
-                    val generatedId: String? = db_ref.child("Pets").push().key
-
-                    GlobalScope.launch {
-                        val pet: Pet
-                        if (url_photo != null) {
-                            val urlPhotoFirebase = Utilities.savePetPhoto(
-                                url_photo!!,
-                                "Pets",
-                                FirebaseAuth.getInstance().currentUser!!.uid,
-                                generatedId!!
-                            )
-                            pet = Pet(
-                                generatedId!!,
-                                name,
-                                type,
-                                breed,
-                                age,
-                                ilness,
-                                vacunes,
-                                weight,
-                                owner,
-                                urlPhotoFirebase
-                            )
-                        } else {
-                            pet = Pet(
-                                generatedId!!,
-                                name,
-                                type,
-                                breed,
-                                age,
-                                ilness,
-                                vacunes,
-                                weight,
-                                owner
-                            )
-                        }
-
-                        Utilities.createPet(pet, db_ref)
-
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                requireContext(),
-                                "Mascota guardada con exito",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            navController.navigate(R.id.action_clientAddPetFragment_to_clientPetFragment)
-                        }
-
-                    }
-
-                } else {
-                    Toast.makeText(requireContext(), "Faltan datos", Toast.LENGTH_SHORT).show()
-                }
-
-            }
-
-            photo.setOnClickListener {
-                galeryAcces.launch("image/*")
-            }
-
-            return view
-        }
-
-        private fun breedSpinner(){
-            when (type) {
-                "Perro" -> {
-                    ArrayAdapter.createFromResource(
-                        requireActivity(),
-                        R.array.dog_breed_array,
-                        android.R.layout.simple_spinner_item
-                    ).also { adapter ->
-                        // Specify the layout to use when the list of choices appears.
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        // Apply the adapter to the spinner.
-                        breedSpinner.adapter = adapter
-                    }
-                }
-                "Gato" -> {
-                    ArrayAdapter.createFromResource(
-                        requireActivity(),
-                        R.array.cat_breed_array,
-                        android.R.layout.simple_spinner_item
-                    ).also { adapter ->
-                        // Specify the layout to use when the list of choices appears.
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        // Apply the adapter to the spinner.
-                        breedSpinner.adapter = adapter
-                    }
-
-                }
-                "Pájaro" -> {
-                    ArrayAdapter.createFromResource(
-                        requireActivity(),
-                        R.array.bird_breed_array,
-                        android.R.layout.simple_spinner_item
-                    ).also { adapter ->
-                        // Specify the layout to use when the list of choices appears.
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        // Apply the adapter to the spinner.
-                        breedSpinner.adapter = adapter
-                    }
-                }
-                "Otro" -> {
-                    ArrayAdapter.createFromResource(
-                        requireActivity(),
-                        R.array.other_breed_array,
-                        android.R.layout.simple_spinner_item
-                    ).also { adapter ->
-                        // Specify the layout to use when the list of choices appears.
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        // Apply the adapter to the spinner.
-                        breedSpinner.adapter = adapter
-                    }
-                }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                breed = ""
             }
         }
 
-        private val galeryAcces = registerForActivityResult(ActivityResultContracts.GetContent())
-        { uri: Uri? ->
-            if (uri != null) {
-                url_photo = uri
-                photo.setImageURI(uri)
+        savePet.setOnClickListener {
+            name = nameEditText.text.toString().trim().capitalize()
+            ilness = ilnessEditText.text.toString().trim().capitalize()
+            age = ageEditText.text.toString().trim().capitalize()
+            weight = weightEditText.text.toString().trim().capitalize()
+            owner = FirebaseAuth.getInstance().currentUser!!.uid.toString()
+
+            // Obtener vacunas seleccionadas
+            vaccines = vaccineCheckBoxes.filter { it.isChecked }
+                .joinToString(separator = "\n") { it.text.toString() }
+
+            if (vaccines.isBlank()) {
+                vaccines = "No tiene vacunas"
+            }
+
+            if (
+                name.isNotEmpty() &&
+                type.isNotEmpty() &&
+                breed.isNotEmpty() &&
+                age.isNotEmpty() &&
+                ilness.isNotEmpty() &&
+                weight.isNotEmpty() &&
+                !pulsado
+            ) {
+
+                pulsado = true
+                val generatedId: String? = db_ref.child("Pets").push().key
+
+                GlobalScope.launch {
+                    val pet: Pet
+                    if (url_photo != null) {
+                        val urlPhotoFirebase = Utilities.savePetPhoto(
+                            url_photo!!,
+                            "Pets",
+                            FirebaseAuth.getInstance().currentUser!!.uid,
+                            generatedId!!
+                        )
+                        pet = Pet(
+                            generatedId!!,
+                            name,
+                            type,
+                            breed,
+                            age,
+                            ilness,
+                            vaccines,
+                            weight,
+                            owner,
+                            urlPhotoFirebase
+                        )
+                    } else {
+                        pet = Pet(
+                            generatedId!!,
+                            name,
+                            type,
+                            breed,
+                            age,
+                            ilness,
+                            vaccines,
+                            weight,
+                            owner
+                        )
+                    }
+
+                    Utilities.createPet(pet, db_ref)
+
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Mascota guardada con éxito",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        navController.navigate(R.id.action_clientAddPetFragment_to_clientPetFragment)
+                    }
+                }
+            } else {
+                Toast.makeText(requireContext(), "Faltan datos", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        photo.setOnClickListener {
+            galeryAcces.launch("image/*")
+        }
+
+        return view
+    }
+
+    private fun breedSpinner() {
+        when (type) {
+            "Perro" -> {
+                ArrayAdapter.createFromResource(
+                    requireActivity(),
+                    R.array.dog_breed_array,
+                    android.R.layout.simple_spinner_item
+                ).also { adapter ->
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    breedSpinner.adapter = adapter
+                }
+            }
+            "Gato" -> {
+                ArrayAdapter.createFromResource(
+                    requireActivity(),
+                    R.array.cat_breed_array,
+                    android.R.layout.simple_spinner_item
+                ).also { adapter ->
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    breedSpinner.adapter = adapter
+                }
+            }
+            "Pájaro" -> {
+                ArrayAdapter.createFromResource(
+                    requireActivity(),
+                    R.array.bird_breed_array,
+                    android.R.layout.simple_spinner_item
+                ).also { adapter ->
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    breedSpinner.adapter = adapter
+                }
+            }
+            "Otro" -> {
+                ArrayAdapter.createFromResource(
+                    requireActivity(),
+                    R.array.other_breed_array,
+                    android.R.layout.simple_spinner_item
+                ).also { adapter ->  adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    breedSpinner.adapter = adapter
+                }
             }
         }
     }
+
+    private val galeryAcces = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        if (uri != null) {
+            url_photo = uri
+            photo.setImageURI(uri)
+        }
+    }
+}

@@ -7,24 +7,32 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.animalhealth.R
 import com.example.animalhealth.clases.Pet
 import com.example.animalhealth.clases.Utilities
+import com.google.firebase.Firebase
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.database
+import com.google.firebase.database.ktx.database
 
 class PetsAdapter(private var pets_list:MutableList<Pet>): RecyclerView.Adapter<PetsAdapter.PetsViewHolder>(),
     Filterable {
     private lateinit var context: Context
     private var filter_list = pets_list
-
+    private lateinit var dbRef: DatabaseReference
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetsViewHolder {
         val item_view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_pet, parent, false)
         context = parent.context
+        dbRef = Firebase.database.reference
         return PetsViewHolder(item_view)
     }
 
@@ -51,6 +59,25 @@ class PetsAdapter(private var pets_list:MutableList<Pet>): RecyclerView.Adapter<
         holder.weight.text = "Peso: "+actual_item.weight
         holder.ilness.text ="Enfermedades: " + actual_item.ilness
         holder.vacunes.text = "Vacunas:\n" +actual_item.vacunes
+
+        holder.itemView.setOnLongClickListener {
+            val popupMenu = PopupMenu(context, holder.itemView)
+            popupMenu.menuInflater.inflate(R.menu.client_pet_menu, popupMenu.menu)
+
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.deletePet -> {
+                        dbRef.child("Pets").child(actual_item.ownerId).child(actual_item.id).removeValue()
+                        notifyDataSetChanged()
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            popupMenu.show()
+            true
+        }
 
         val URL: String? = when (actual_item.photo) {
             "" -> null

@@ -17,7 +17,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.math.atan2
@@ -89,25 +88,6 @@ class Utilities {
             db_ref.child("Users").child(userId).removeValue().await()
         }
 
-        suspend fun obtainFavClinics(dbRef:DatabaseReference): String {
-            var favClinics = ""
-            dbRef.child("Users").addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    snapshot.children.forEach { child: DataSnapshot ->
-                        if (child.key == FirebaseAuth.getInstance().currentUser?.uid) {
-                            favClinics = child.child("favClinics").value.toString()
-                        }
-                        Log.d("Fav", favClinics)
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    println(error.message)
-                }
-            })
-            return favClinics
-        }
-
         suspend fun obtainUser(db_ref: DatabaseReference): User? {
             return suspendCancellableCoroutine { continuation ->
                 val currentUser = FirebaseAuth.getInstance().currentUser
@@ -162,5 +142,7 @@ class Utilities {
             return options
         }
     }
+
+
 
 }

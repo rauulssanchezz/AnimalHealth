@@ -25,145 +25,149 @@ import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.User
 import com.example.animalhealth.clases.Utilities
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resumeWithException
 
 
-class ClinicAdapter(private val clinic_list:MutableList<Clinic>): RecyclerView.Adapter<ClinicAdapter.ClinicViewHolder>(),
-    Filterable {
+class ClinicAdapter(private val clinic_list: MutableList<Clinic>) : RecyclerView.Adapter<ClinicAdapter.ClinicViewHolder>(), Filterable {
 
-        private lateinit var context: Context
-        private var filter_list=clinic_list
-        private lateinit var  sharedPreferences : SharedPreferences
-        private lateinit var navController: NavController
+    private lateinit var context: Context
+    private var filter_list = clinic_list
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var navController: NavController
+    private val adapterScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClinicViewHolder {
+        val item_view = LayoutInflater.from(parent.context).inflate(R.layout.item_clinic, parent, false)
+        context = parent.context
+        sharedPreferences = context.getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+        navController = Navigation.findNavController(parent)
+        return ClinicViewHolder(item_view)
+    }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClinicViewHolder {
-            val item_view= LayoutInflater.from(parent.context).inflate(R.layout.item_clinic,parent,false)
-            context=parent.context
-            sharedPreferences = context.getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
-            navController = Navigation.findNavController(parent)
+    override fun getItemCount(): Int = filter_list.size
 
-            return ClinicViewHolder(item_view)
+    class ClinicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val photo: ImageView = itemView.findViewById(R.id.clinicPhoto)
+        val name: TextView = itemView.findViewById(R.id.clinicName)
+        val address: TextView = itemView.findViewById(R.id.clinicLocation)
+        val ratingBar: RatingBar = itemView.findViewById(R.id.clinicRate)
+        val phone: TextView = itemView.findViewById(R.id.clinicPhone)
+        val fav: ImageView = itemView.findViewById(R.id.favoriteButton)
+        val booking: AppCompatButton = itemView.findViewById(R.id.reserveButton)
+    }
+
+    override fun onBindViewHolder(holder: ClinicViewHolder, position: Int) {
+        val actual_item = filter_list[position]
+        holder.name.text = actual_item.name
+        holder.address.text = actual_item.location
+        holder.ratingBar.rating = actual_item.rate
+        holder.phone.text = actual_item.phone
+
+        holder.booking.setOnClickListener {
+            navController.navigate(R.id.action_clientClinicsFragment_to_clientBookingFragment)
+            sharedPreferences.edit().putString("clinicId", actual_item.id).apply()
         }
 
-        override fun getItemCount(): Int = filter_list.size
-
-        class ClinicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-            val photo: ImageView = itemView.findViewById(R.id.clinicPhoto)
-            val name: TextView = itemView.findViewById(R.id.clinicName)
-            val address: TextView = itemView.findViewById(R.id.clinicLocation)
-            val ratingBar: RatingBar =itemView.findViewById(R.id.clinicRate)
-            val phone : TextView = itemView.findViewById(R.id.clinicPhone)
-            val fav : ImageView = itemView.findViewById(R.id.favoriteButton)
-            val booking: AppCompatButton = itemView.findViewById(R.id.reserveButton)
-        }
-
-
-        override fun onBindViewHolder(holder: ClinicViewHolder, position: Int) {
-            val actual_item=filter_list[position]
-            holder.name.text=actual_item.name
-            holder.address.text=actual_item.location
-            holder.ratingBar.rating=actual_item.rate
-            holder.phone.text=actual_item.phone
-
-            holder.booking.setOnClickListener {
-                navController.navigate(R.id.action_clientClinicsFragment_to_clientBookingFragment)
-                sharedPreferences.edit().putString("clinicId", actual_item.id).apply()
-            }
-
-            var fav = ""
-            GlobalScope.launch {
-                fav= Utilities.obtainFavClinics(dbRef = FirebaseDatabase.getInstance().reference)
-            }
-
-            Log.d("fav", "$fav de adapter1")
-            var favs = fav.split(",")
-            Log.d("fav", "$fav de adapter")
+        // Launching a coroutine to fetch favorite clinics
+        adapterScope.launch {
+            val fav = obtainFavClinics(FirebaseDatabase.getInstance().reference)
+            val favs = fav.split(",")
             if (favs.contains(actual_item.id)) {
                 holder.fav.setImageResource(R.drawable.baseline_favorite_24)
+            } else {
+                holder.fav.setImageResource(R.drawable.baseline_favorite_border_24)
             }
 
             holder.fav.setOnClickListener {
-
-                if (fav == "null"){
-                    fav = "$actual_item.id,"
-                }else{
-
-                }
-
-                if (!favs.contains(actual_item.id)) {
-                    fav = fav.plus(actual_item.id).plus(",")
-                    fav = fav.trim()
-                    holder.fav.setImageResource(R.drawable.baseline_favorite_24)
-
-                }else{
-                    fav = fav.replace(actual_item.id, "")
-                    fav = fav.replace(",,", ",")
-                    fav = fav.trim()
-
-                    if (fav == ","){
-                        fav = "null"
-                    }
-
-                    holder.fav.setImageResource(R.drawable.baseline_favorite_border_24)
-                }
-
-                val id = FirebaseAuth.getInstance().currentUser?.uid
-                var name = sharedPreferences.getString("Name", "")
-                var email = sharedPreferences.getString("Email", "")
-                var password = sharedPreferences.getString("Password", "")
-                var type = sharedPreferences.getString("Type", "")
-                var img = sharedPreferences.getString("Img", "")
-
-                GlobalScope.launch {
-                    val db_ref = FirebaseDatabase.getInstance().reference
-                    db_ref.child("Users").child(id!!)
-                        .setValue(User(id, name!!, email!!, password!!, type!!, img!!, fav))
-                }
+                handleFavoriteClick(actual_item, holder, fav)
             }
-            holder.itemView.setOnClickListener {
-                var newIntent=Intent(context,ClientClinicInfoActivity::class.java)
-                newIntent.putExtra("clinic",actual_item)
-                context.startActivity(newIntent)
-            }
-
-            val URL:String? = when (actual_item.photo){
-                ""->null
-                else->actual_item.photo
-            }
-
-            Glide.with(context).load(URL).apply(Utilities.glideOptions(context)).transition(Utilities.transition).into(holder.photo)
         }
 
-        override fun getFilter(): Filter {
-            return  object : Filter(){
-                override fun performFiltering(p0: CharSequence?): FilterResults {
-                    val search = p0.toString().lowercase()
+        holder.itemView.setOnClickListener {
+            val newIntent = Intent(context, ClientClinicInfoActivity::class.java)
+            newIntent.putExtra("clinic", actual_item)
+            context.startActivity(newIntent)
+        }
 
-                    if (search.isEmpty()){
-                        filter_list = clinic_list
-                    }else {
-                        filter_list = (clinic_list.filter {
-                            if (it.name.toString().lowercase().contains(search)){
-                                it.name.toString().lowercase().contains(search)
-                            }else{
-                                it.location.toString().lowercase().contains(search)
-                            }
-                        }) as MutableList<Clinic>
+        val URL: String? = if (actual_item.photo.isEmpty()) null else actual_item.photo
+        Glide.with(context).load(URL).apply(Utilities.glideOptions(context)).transition(Utilities.transition).into(holder.photo)
+    }
+
+    private fun handleFavoriteClick(actual_item: Clinic, holder: ClinicViewHolder, fav: String) {
+        var updatedFav = fav
+        val favs = updatedFav.split(",")
+
+        if (favs.contains(actual_item.id)) {
+            updatedFav = updatedFav.replace("${actual_item.id},", "")
+            holder.fav.setImageResource(R.drawable.baseline_favorite_border_24)
+        } else {
+            updatedFav = "$updatedFav${actual_item.id},"
+            holder.fav.setImageResource(R.drawable.baseline_favorite_24)
+        }
+
+        val id = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val name = sharedPreferences.getString("Name", "") ?: ""
+        val email = sharedPreferences.getString("Email", "") ?: ""
+        val password = sharedPreferences.getString("Password", "") ?: ""
+        val type = sharedPreferences.getString("Type", "") ?: ""
+        val img = sharedPreferences.getString("Img", "") ?: ""
+
+        adapterScope.launch {
+            val db_ref = FirebaseDatabase.getInstance().reference
+            db_ref.child("Users").child(id).setValue(User(id, name, email, password, type, img, updatedFav))
+        }
+    }
+
+    private suspend fun obtainFavClinics(dbRef: DatabaseReference): String {
+        return suspendCancellableCoroutine { continuation ->
+            dbRef.child("Users").child(FirebaseAuth.getInstance().currentUser?.uid ?: return@suspendCancellableCoroutine)
+                .child("favClinics")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val favClinics = snapshot.value.toString()
+                        continuation.resume(favClinics) { throwable -> throwable.printStackTrace() }
                     }
 
-                    val filterResults = FilterResults()
-                    filterResults.values = filter_list
-                    return filterResults
+                    override fun onCancelled(error: DatabaseError) {
+                        continuation.resumeWithException(error.toException())
+                    }
+                })
+        }
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(p0: CharSequence?): FilterResults {
+                val search = p0.toString().lowercase()
+                filter_list = if (search.isEmpty()) {
+                    clinic_list
+                } else {
+                    clinic_list.filter {
+                        it.name.lowercase().contains(search) || it.location.lowercase().contains(search)
+                    } as MutableList<Clinic>
                 }
 
-                override fun publishResults(p0: CharSequence?, p1: FilterResults?) {
-                    notifyDataSetChanged()
-                }
-
+                val filterResults = FilterResults()
+                filterResults.values = filter_list
+                return filterResults
             }
+
+            override fun publishResults(p0: CharSequence?, p1: FilterResults?) {
+                filter_list = p1?.values as MutableList<Clinic>
+                notifyDataSetChanged()
+            }
+        }
     }
 }

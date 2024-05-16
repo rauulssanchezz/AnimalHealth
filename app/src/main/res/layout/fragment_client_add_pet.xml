@@ -89,33 +89,54 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutVacunes"
+    <LinearLayout
+        android:id="@+id/vaccineContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/textInputLayoutIlness"
-        app:layout_constraintStart_toStartOf="@id/textInputLayoutIlness"
-        app:layout_constraintEnd_toEndOf="@id/textInputLayoutIlness"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
-        android:scrollbars="vertical"
-        style="@style/Widget.Design.TextInputLayout"
-        >
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
 
-        <Spinner
-            android:id="@+id/spinnerVacunes"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Vacunas"
-            android:inputType="text" />
+            android:text="Vacunas:"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <!-- Lista de CheckBoxes para las vacunas -->
+        <CheckBox
+            android:id="@+id/checkBoxVacuna1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rabia"/>
+
+        <CheckBox
+            android:id="@+id/checkBoxVacuna2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Panleucopenia"/>
+
+        <CheckBox
+            android:id="@+id/checkBoxVacuna3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Salmonelosis aviar"/>
+
+        <!-- Agrega más CheckBoxes según sea necesario -->
+
+    </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayoutAge"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/textInputLayoutVacunes"
-        app:layout_constraintStart_toStartOf="@id/textInputLayoutVacunes"
+        app:layout_constraintTop_toBottomOf="@id/vaccineContainer"
+        app:layout_constraintStart_toStartOf="@id/vaccineContainer"
         app:layout_constraintEnd_toStartOf="@id/textInputLayoutWeight"
         android:layout_marginTop="16dp"
         style="@style/Widget.Design.TextInputLayout"
@@ -134,9 +155,9 @@
         android:id="@+id/textInputLayoutWeight"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/textInputLayoutVacunes"
+        app:layout_constraintTop_toBottomOf="@id/vaccineContainer"
         app:layout_constraintStart_toEndOf="@id/textInputLayoutAge"
-        app:layout_constraintEnd_toEndOf="@id/textInputLayoutVacunes"
+        app:layout_constraintEnd_toEndOf="@id/vaccineContainer"
         android:layout_marginTop="16dp"
         style="@style/Widget.Design.TextInputLayout"
         >
@@ -158,8 +179,8 @@
         android:text="Guardar"
         android:textColor="@color/colorButtonText"
         app:layout_constraintTop_toBottomOf="@id/textInputLayoutWeight"
-        app:layout_constraintStart_toStartOf="@id/textInputLayoutVacunes"
-        app:layout_constraintEnd_toEndOf="@id/textInputLayoutVacunes"
+        app:layout_constraintStart_toStartOf="@id/vaccineContainer"
+        app:layout_constraintEnd_toEndOf="@id/vaccineContainer"
         android:layout_marginTop="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

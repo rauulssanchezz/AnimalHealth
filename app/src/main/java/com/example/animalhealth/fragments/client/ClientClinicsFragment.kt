@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,17 +28,20 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resumeWithException
 
 class ClientClinicsFragment : Fragment() {
-    private lateinit var dbRef : DatabaseReference
-    private lateinit var list : MutableList<Clinic>
-    private lateinit var recycler : RecyclerView
-    private lateinit var adapter : ClinicAdapter
-    private lateinit var filters : ImageView
-    private lateinit var search : SearchView
+    private lateinit var dbRef: DatabaseReference
+    private lateinit var list: MutableList<Clinic>
+    private lateinit var recycler: RecyclerView
+    private lateinit var adapter: ClinicAdapter
+    private lateinit var filters: ImageView
+    private lateinit var search: SearchView
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var newList : MutableList<Clinic>
-    private lateinit var favClinics : String
+    private lateinit var newList: MutableList<Clinic>
+    private lateinit var favClinics: String
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,7 +49,7 @@ class ClientClinicsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_client_clinics, container, false)
 
         dbRef = FirebaseDatabase.getInstance().reference
-        list = mutableListOf<Clinic>()
+        list = mutableListOf()
         recycler = view.findViewById(R.id.clinicRecyclerView)
         filters = view.findViewById(R.id.filters)
         search = view.findViewById(R.id.searchView)
@@ -76,38 +80,37 @@ class ClientClinicsFragment : Fragment() {
             popupMenu.inflate(R.menu.client_clinics_filters_menu)
 
             popupMenu.setOnMenuItemClickListener { item ->
-                when(item.itemId) {
-
-                    R.id.fav ->{
+                when (item.itemId) {
+                    R.id.fav -> {
                         Log.d("Fav", "Entra en fav")
-                        GlobalScope.launch {
-                           favClinics = Utilities.obtainFavClinics(dbRef)
-                        }
-                        Log.d("Fav", favClinics.toString())
-                        if (favClinics == "null") {
-                            Log.d("Fav", "No hay favoritos")
-                            Toast.makeText(requireContext(), "No hay clínicas favoritas", Toast.LENGTH_SHORT).show()
-                        }else{
-                            Log.d("Fav", "Hay favoritos")
-                            for (clinic in list) {
-                                Log.d("Fav", clinic.id)
-                                Log.d("Fav", favClinics.toString())
-                                if (favClinics.contains(clinic.id)) {
-                                    Log.d("Fav", "Añade a la lista")
-                                    newList.add(clinic)
-                                    Log.d("Fav", newList.toString())
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            favClinics = obtainFavClinics(dbRef)
+                            Log.d("Fav", favClinics)
+                            if (favClinics == "null") {
+                                Log.d("Fav", "No hay favoritos")
+                                Toast.makeText(requireContext(), "No hay clínicas favoritas", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Log.d("Fav", "Hay favoritos")
+                                newList.clear() // Clear the newList before adding
+                                for (clinic in list) {
+                                    Log.d("Fav", clinic.id)
+                                    if (favClinics.contains(clinic.id)) {
+                                        Log.d("Fav", "Añade a la lista")
+                                        newList.add(clinic)
+                                    }
+                                }
+                                if (newList.isEmpty()) {
+                                    Toast.makeText(requireContext(), "No hay clínicas favoritas", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    list.clear()
+                                    list.addAll(newList)
+                                    newList.clear()
+                                    adapter.notifyDataSetChanged()
                                 }
                             }
-                            list.clear()
-                            list.addAll(newList)
-                            newList.clear()
-                            Log.d("Fav", list.toString())
-                            adapter.notifyDataSetChanged()
-                            Log.d("Fav", "Notifica")
                         }
                         true
                     }
-
                     R.id.name -> {
                         list.sortBy { it.name }
                         adapter.notifyDataSetChanged()
@@ -119,7 +122,8 @@ class ClientClinicsFragment : Fragment() {
                         Log.d("Latitud", latitud.toString())
                         if (latitud == 0.0 && longitud == 0.0) {
                             Toast.makeText(requireContext(), "No se ha podido obtener la ubicación", Toast.LENGTH_SHORT).show()
-                        }else {
+                        } else {
+                            newList.clear() // Clear the newList before adding
                             for (clinic in list) {
                                 val distancia = Utilities.calcularDistancia(
                                     latitud!!,
@@ -132,11 +136,7 @@ class ClientClinicsFragment : Fragment() {
                                 }
                             }
                             if (newList.isEmpty()) {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "No hay clínicas cercanas",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                Toast.makeText(requireContext(), "No hay clínicas cercanas", Toast.LENGTH_SHORT).show()
                             } else {
                                 list.clear()
                                 list.addAll(newList)
@@ -148,17 +148,14 @@ class ClientClinicsFragment : Fragment() {
                         true
                     }
                     R.id.reviews -> {
-                        list.sortBy { it.rate }
-                        list.reverse()
+                        list.sortByDescending { it.rate }
                         adapter.notifyDataSetChanged()
                         true
                     }
-
                     R.id.all -> {
                         obtainClinics()
                         true
                     }
-
                     else -> false
                 }
             }
@@ -179,13 +176,12 @@ class ClientClinicsFragment : Fragment() {
         return view
     }
 
-    private fun obtainClinics(){
+    private fun obtainClinics() {
         dbRef.child("Clinics")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     list.clear()
-                    snapshot.children.forEach { hijo: DataSnapshot?
-                        ->
+                    snapshot.children.forEach { hijo: DataSnapshot? ->
                         val pojo_clinic = hijo?.getValue(Clinic::class.java)
                         list.add(pojo_clinic!!)
                     }
@@ -198,5 +194,20 @@ class ClientClinicsFragment : Fragment() {
             })
     }
 
+    private suspend fun obtainFavClinics(dbRef: DatabaseReference): String {
+        return suspendCancellableCoroutine { continuation ->
+            dbRef.child("Users").child(FirebaseAuth.getInstance().currentUser?.uid ?: return@suspendCancellableCoroutine)
+                .child("favClinics")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val favClinics = snapshot.value.toString()
+                        continuation.resume(favClinics) { throwable -> throwable.printStackTrace() }
+                    }
 
+                    override fun onCancelled(error: DatabaseError) {
+                        continuation.resumeWithException(error.toException())
+                    }
+                })
+        }
+    }
 }

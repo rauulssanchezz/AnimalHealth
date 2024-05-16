@@ -93,7 +93,7 @@ class BookingAdapter(private val books_list:MutableList<Booking>): RecyclerView.
         }
 
         // Obtener y establecer los detalles de la mascota
-        dbRef.child("Pets").child(actual_item.petId).get().addOnSuccessListener { snapshot ->
+        dbRef.child("Pets").child(actual_item.ownerId).child(actual_item.petId).get().addOnSuccessListener { snapshot ->
             val pet = snapshot.getValue(Pet::class.java)
             holder.petName.text = pet?.name
             holder.petBreed.text = pet?.breed
