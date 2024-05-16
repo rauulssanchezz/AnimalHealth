@@ -19,7 +19,10 @@
     <color name="colorBottomNavigationNight">#2196F3</color> <!-- BottomNavigationView azul claro -->
     <color name="colorCardViewNight">#2196F3</color> <!-- CardView azul claro -->
     <color name="colorButtonTextNight">#FFFFFF</color> <!-- Texto de botón blanco -->
-    <color name="colorProgressBarNight">#FFC107</color> <!-- Amarillo para ProgressBar de RatingBar -->
+    <color name="colorProgressBarNight">#FFC107</color>
+    <color name="negro_transparente">#B72B2929
+    </color>
+    <color name="white">#FFFFFF</color> <!-- Amarillo para ProgressBar de RatingBar -->
 
 
 </resources>

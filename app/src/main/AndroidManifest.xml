@@ -18,6 +18,9 @@
         android:theme="@style/Theme.AnimalHealth"
         tools:targetApi="31">
         <activity
+            android:name=".activities.common.MensajeActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.vet.VetAddClinicActivity"
             android:exported="false" />
         <activity

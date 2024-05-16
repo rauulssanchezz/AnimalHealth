@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.animalhealth.R
 import com.example.animalhealth.activities.client.ClientClinicInfoActivity
+import com.example.animalhealth.activities.common.MensajeActivity
 import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.User
 import com.example.animalhealth.clases.Utilities
@@ -66,6 +67,7 @@ class ClinicAdapter(private val clinic_list: MutableList<Clinic>) : RecyclerView
         val phone: TextView = itemView.findViewById(R.id.clinicPhone)
         val fav: ImageView = itemView.findViewById(R.id.favoriteButton)
         val booking: AppCompatButton = itemView.findViewById(R.id.reserveButton)
+        val chatButton = itemView.findViewById<ImageView>(R.id.clinicChatButton)
     }
 
     override fun onBindViewHolder(holder: ClinicViewHolder, position: Int) {
@@ -74,6 +76,11 @@ class ClinicAdapter(private val clinic_list: MutableList<Clinic>) : RecyclerView
         holder.address.text = actual_item.location
         holder.ratingBar.rating = actual_item.rate
         holder.phone.text = actual_item.phone
+
+        holder.chatButton.setOnClickListener {
+            var intent = Intent(context, MensajeActivity::class.java)
+            context.startActivity(intent)
+        }
 
         holder.booking.setOnClickListener {
             navController.navigate(R.id.action_clientClinicsFragment_to_clientBookingFragment)
