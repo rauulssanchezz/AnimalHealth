@@ -1,32 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.vet.VetClinicFragment">
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/addClinic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginVertical="15dp"
-        android:layout_marginHorizontal="15dp"
-        android:backgroundTint="@color/colorPrimary"
-        app:cardCornerRadius="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         >
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_add_circle_outline_24"
+            android:id="@+id/addPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:src="@drawable/baseline_add_photo_alternate_24"
             android:adjustViewBounds="true"
-            android:layout_marginVertical="5dp"
-            android:layout_marginHorizontal="5dp"
-            />
-    </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/textInputLayoutName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/addPhoto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="32dp"
+            style="@style/Widget.Design.TextInputLayout"
+            >
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre"
+                android:inputType="text" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutStreet"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="32dp"
+            style="@style/Widget.Design.TextInputLayout"
+            android:focusable="false"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextStreet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Direccion"
+                android:inputType="textPostalAddress"
+                android:focusable="false"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutPostalCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutStreet"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="32dp"
+            style="@style/Widget.Design.TextInputLayout"
+            android:focusable="false"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextPostalCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Codigo Postal"
+                android:inputType="number"
+                android:focusable="false"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutPhone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutPostalCode"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="32dp"
+            style="@style/Widget.Design.TextInputLayout"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Telefono"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonSave"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="Guardar Cambios"
+            android:textColor="@color/colorButtonText"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutPhone"
+            app:layout_constraintStart_toStartOf="@id/textInputLayoutPhone"
+            app:layout_constraintEnd_toEndOf="@id/textInputLayoutPhone"
+            android:layout_marginTop="16dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

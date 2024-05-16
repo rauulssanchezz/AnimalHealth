@@ -5,6 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CalendarView
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +25,7 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.Calendar
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -38,6 +42,34 @@ class VetBookingFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_vet_booking, container, false)
 
+        val date = Calendar.getInstance()
+        val actualDate = "${date.get(Calendar.DAY_OF_MONTH)}/${date.get(Calendar.MONTH) + 1}/${date.get(
+            Calendar.YEAR)}"
+
+        val dateCardView = view.findViewById<CardView>(R.id.bookingCalendar)
+        val dateText = view.findViewById<TextView>(R.id.date)
+        val calendarView = view.findViewById<CalendarView>(R.id.bookingCalendarView)
+
+        dateText.text = actualDate
+
+        dateCardView.setOnClickListener {
+            Log.d("Calendar", "Clicked")
+            if (calendarView.visibility == View.VISIBLE) {
+                calendarView.visibility = View.GONE
+                recycler.visibility = View.VISIBLE
+                Log.d("Calendar", "Gone")
+            } else {
+                calendarView.visibility = View.VISIBLE
+                recycler.visibility = View.GONE
+                Log.d("Calendar", "Visible")
+            }
+        }
+
+        calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            val newDate = "$dayOfMonth/${month + 1}/$year"
+            dateText.text = newDate
+        }
+
         dbRef = FirebaseDatabase.getInstance().reference
         bookingList = mutableListOf()
         var clinic : Clinic?=null
@@ -53,7 +85,7 @@ class VetBookingFragment : Fragment() {
                             ->
                             val pojo_clinic = hijo?.getValue(Booking::class.java)
                             Log.d("Booking", pojo_clinic.toString())
-                            if (pojo_clinic?.clinicId == clinic?.id) {
+                            if (pojo_clinic?.clinicId == clinic?.id && pojo_clinic?.date == dateText.text.toString()) {
                                 bookingList.add(pojo_clinic!!)
                             }
                         }

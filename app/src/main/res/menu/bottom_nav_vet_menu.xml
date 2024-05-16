@@ -7,7 +7,7 @@
         />
     <item
         android:id="@+id/vetClinicFragment"
-        android:icon="@drawable/icons8_cl_nica_96"
+        android:icon="@drawable/baseline_business_24"
         android:title="Clinica"
         />
 

@@ -33,6 +33,7 @@ class LoginFragment : Fragment(){
                 navController.navigate(R.id.action_loginFragment_to_loadingFragment)
             }
         }
+        var pulsado = false
         val buttonLogin=view.findViewById<TextView>(R.id.buttonLogin)
         val signInButton = view.findViewById<SignInButton>(R.id.buttonLoginGoogle)
         signInButton.setSize(SignInButton.SIZE_WIDE) // Puedes ajustar el tamaño del botón según tus necesidades
@@ -58,7 +59,8 @@ class LoginFragment : Fragment(){
             password=passwordEditText.text.toString()
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(context, "Por favor, rellena todos los campos", Toast.LENGTH_SHORT).show()
-            }else {
+            }else if (!pulsado){
+                pulsado=true
                 val auth = FirebaseAuth.getInstance()
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {

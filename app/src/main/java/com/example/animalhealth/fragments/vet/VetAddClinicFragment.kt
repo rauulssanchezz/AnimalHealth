@@ -91,11 +91,11 @@ class VetAddClinicFragment : Fragment() {
                             if (urlPhoto!=null) {
                                 val urlPhotoFb = Utilities.savePhoto(urlPhoto!!, "Clinics", clinicId!!)
                                 val clinic =
-                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,Firebase.auth.currentUser!!.uid, urlPhotoFb,phone)
+                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,Firebase.auth.currentUser!!.uid, urlPhotoFb,phone,postalCodeEditText.text.toString())
                                 Utilities.createClinic(clinic, dbRef)
                             }else{
                                 val clinic =
-                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,Firebase.auth.currentUser!!.uid,phone)
+                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,Firebase.auth.currentUser!!.uid,phone,postalCodeEditText.text.toString())
                                 Utilities.createClinic(clinic, dbRef)
                             }
 

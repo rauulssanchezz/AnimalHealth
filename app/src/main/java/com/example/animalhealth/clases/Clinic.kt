@@ -14,4 +14,5 @@ data class Clinic (
     var vetId : String = "",
     var photo : String = "",
     var phone : String = "",
+    var postalCode : String = "",
 ):Parcelable
