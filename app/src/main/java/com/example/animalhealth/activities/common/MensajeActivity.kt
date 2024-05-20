@@ -17,10 +17,12 @@ import com.example.animalhealth.R
 import com.example.animalhealth.activities.VetMainActivity
 import com.example.animalhealth.activities.client.ClientMainActivity
 import com.example.animalhealth.adapters.MensajeAdaptador
+import com.example.animalhealth.clases.Chat
 import com.example.animalhealth.clases.Mensaje
 import com.example.animalhealth.clases.User
 import com.example.animalhealth.clases.Utilities
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,6 +30,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import com.google.firebase.database.snapshots
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -44,7 +47,7 @@ class MensajeActivity : AppCompatActivity() {
     private lateinit var boton_enviar: Button
     private lateinit var user_actual: User
     private var last_pos: Int = 0
-
+    private var chat : Chat? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mensaje)
@@ -56,6 +59,7 @@ class MensajeActivity : AppCompatActivity() {
             lista = mutableListOf()
             mensaje_enviado = findViewById(R.id.texto_mensaje)
             boton_enviar = findViewById(R.id.boton_enviar)
+            var userId = intent.getStringExtra("userId")
 
             boton_enviar.setOnClickListener {
                 last_pos = 1
@@ -70,13 +74,29 @@ class MensajeActivity : AppCompatActivity() {
                     val nuevo_mensaje = Mensaje(
                         id_mensaje,
                         user_actual.id,
-                        "",
-                        "",
+                        userId,
+                        user_actual.img,
                         mensaje,
                         fecha_hora
                     )
-                    db_ref.child("chat").child("mensajes").child(id_mensaje).setValue(nuevo_mensaje)
-                    mensaje_enviado.setText("")
+                    db_ref.child("Users").child(user_actual.id).child("Chats").child(userId!!)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                chat = snapshot.getValue(Chat::class.java)
+                                if (chat == null) {
+                                    var id = db_ref.child("Users").child(user_actual.id).child("Chats").push().key
+                                    chat = Chat(id!!,userId, user_actual.img, user_actual.name)
+                                    db_ref.child("Users").child(userId!!).child("Chats").setValue(chat)
+                                }
+
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                println(error.message)
+                            }
+                        })
+
+                  mensaje_enviado.setText("")
                 } else {
                     Toast.makeText(applicationContext, "Escribe algo", Toast.LENGTH_SHORT).show()
                 }

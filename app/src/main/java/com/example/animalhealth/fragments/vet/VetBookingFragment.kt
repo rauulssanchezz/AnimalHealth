@@ -9,20 +9,19 @@ import android.widget.CalendarView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.animalhealth.R
 import com.example.animalhealth.adapters.BookingAdapter
 import com.example.animalhealth.clases.Booking
 import com.example.animalhealth.clases.Clinic
-import com.example.animalhealth.clases.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Calendar
@@ -34,6 +33,8 @@ class VetBookingFragment : Fragment() {
     private lateinit var bookingList : MutableList<Booking>
     private lateinit var recycler : RecyclerView
     private lateinit var adapter : BookingAdapter
+    private var clinic : Clinic?=null
+    private lateinit var dateText : TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,8 +48,10 @@ class VetBookingFragment : Fragment() {
             Calendar.YEAR)}"
 
         val dateCardView = view.findViewById<CardView>(R.id.bookingCalendar)
-        val dateText = view.findViewById<TextView>(R.id.date)
+        dateText = view.findViewById<TextView>(R.id.date)
         val calendarView = view.findViewById<CalendarView>(R.id.bookingCalendarView)
+
+        calendarView.visibility = View.GONE
 
         dateText.text = actualDate
 
@@ -65,54 +68,36 @@ class VetBookingFragment : Fragment() {
             }
         }
 
-        calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val newDate = "$dayOfMonth/${month + 1}/$year"
             dateText.text = newDate
+            loadBookings(newDate)
         }
 
         dbRef = FirebaseDatabase.getInstance().reference
         bookingList = mutableListOf()
-        var clinic : Clinic?=null
-        GlobalScope.launch {
-            clinic = getClinicForUser(dbRef, FirebaseAuth.getInstance().currentUser!!.uid)
-
-            Log.d("ClinicId", clinic?.id.toString())
-            dbRef.child("Bookings")
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        bookingList.clear()
-                        snapshot.children.forEach { hijo: DataSnapshot?
-                            ->
-                            val pojo_clinic = hijo?.getValue(Booking::class.java)
-                            Log.d("Booking", pojo_clinic.toString())
-                            if (pojo_clinic?.clinicId == clinic?.id && pojo_clinic?.date == dateText.text.toString()) {
-                                bookingList.add(pojo_clinic!!)
-                            }
-                        }
-                        recycler.adapter?.notifyDataSetChanged()
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        println(error.message)
-                    }
-                })
-        }
 
         recycler = view.findViewById(R.id.vetBookingRecyclerView)
         adapter = BookingAdapter(bookingList)
         recycler.adapter = adapter
         recycler.layoutManager = LinearLayoutManager(requireActivity())
 
+        lifecycleScope.launch {
+            clinic = getClinicForUser(dbRef, FirebaseAuth.getInstance().currentUser!!.uid)
+            loadBookings(actualDate)
+        }
+
         return view
     }
-    private suspend fun getClinicForUser(db_ref: DatabaseReference, id : String): Clinic? {
+
+    private suspend fun getClinicForUser(db_ref: DatabaseReference, id: String): Clinic? {
         return suspendCancellableCoroutine { continuation ->
             val clinicsRef = db_ref.child("Clinics")
             val listener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     var clinic: Clinic? = null
-                    snapshot.children.forEach { hijo: DataSnapshot? ->
-                        val pojo_clinic = hijo?.getValue(Clinic::class.java)
+                    snapshot.children.forEach { child: DataSnapshot? ->
+                        val pojo_clinic = child?.getValue(Clinic::class.java)
                         if (pojo_clinic?.vetId == id) {
                             clinic = pojo_clinic
                         }
@@ -130,5 +115,27 @@ class VetBookingFragment : Fragment() {
                 clinicsRef.removeEventListener(listener)
             }
         }
+    }
+
+    private fun loadBookings(date: String) {
+        dbRef.child("Bookings")
+            .orderByChild("clinicId")
+            .equalTo(clinic?.id)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    bookingList.clear()
+                    snapshot.children.forEach { child: DataSnapshot? ->
+                        val booking = child?.getValue(Booking::class.java)
+                        if (booking?.date == date) {
+                            bookingList.add(booking!!)
+                        }
+                    }
+                    adapter.notifyDataSetChanged()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Firebase", error.message)
+                }
+            })
     }
 }

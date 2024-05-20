@@ -19,7 +19,7 @@ class MensajeAdaptador(private val lista_mensajes: List<Mensaje>, last_pos: Int)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MensajeViewHolder {
         val vista_item =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_chat, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_mensaje, parent, false)
         //Para poder hacer referencia al contexto de la aplicacion
         contexto = parent.context
 

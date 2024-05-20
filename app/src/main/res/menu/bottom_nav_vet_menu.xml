@@ -10,7 +10,10 @@
         android:icon="@drawable/baseline_business_24"
         android:title="Clinica"
         />
-
+    <item android:id="@+id/chatFragment"
+        android:icon="@drawable/baseline_chat_24"
+        android:title="Chat"
+        />
     <item
         android:id="@+id/userFragment"
         android:icon="@drawable/baseline_account_circle"

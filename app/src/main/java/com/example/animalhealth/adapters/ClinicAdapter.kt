@@ -79,6 +79,7 @@ class ClinicAdapter(private val clinic_list: MutableList<Clinic>) : RecyclerView
 
         holder.chatButton.setOnClickListener {
             var intent = Intent(context, MensajeActivity::class.java)
+            intent.putExtra("vetId", actual_item.vetId)
             context.startActivity(intent)
         }
 

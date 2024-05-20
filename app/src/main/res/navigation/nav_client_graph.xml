@@ -64,4 +64,10 @@
         android:label="fragment_clientBooking"
         tools:layout="@layout/fragment_client_booking" />
 
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.animalhealth.fragments.common.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
+
 </navigation>

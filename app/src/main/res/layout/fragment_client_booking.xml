@@ -28,14 +28,6 @@
                 android:adjustViewBounds="true"
                 android:src="@drawable/logo_animal_health"
                 />
-            <SearchView
-                android:id="@+id/searchView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/filters"
-                />
 
             <ImageView
                 android:id="@+id/filters"
