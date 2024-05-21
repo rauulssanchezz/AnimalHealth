@@ -14,16 +14,20 @@ import com.example.animalhealth.R
 import com.example.animalhealth.activities.VetMainActivity
 import com.example.animalhealth.activities.client.ClientMainActivity
 import com.example.animalhealth.adapters.MensajeAdaptador
+import com.example.animalhealth.clases.Chat
 import com.example.animalhealth.clases.Mensaje
 import com.example.animalhealth.clases.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.concurrent.CountDownLatch
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class MensajeActivity : AppCompatActivity() {
     private lateinit var recycler: RecyclerView
@@ -76,18 +80,46 @@ class MensajeActivity : AppCompatActivity() {
         val formateador = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val fecha_hora = formateador.format(hoy.time)
 
-        val id_mensaje = db_ref.child("chat").child("mensajes").push().key!!
-        val nuevo_mensaje = Mensaje(
-            id_mensaje,
-            userActual?.id ?: "",
-            userActual?.name ?: "",
-            "",
-            userActual?.img ?: "",
-            mensaje,
-            fecha_hora
-        )
+        if (userId.isEmpty()) {
+            val id_mensaje = db_ref.child("Users").child("ChatPublico").child("Mensajes").push().key!!
+            val nuevo_mensaje = Mensaje(
+                id_mensaje,
+                userActual?.id ?: "",
+                userActual?.name ?: "",
+                userId,
+                userActual?.img ?: "",
+                mensaje,
+                fecha_hora
+            )
+            db_ref.child("Users").child("ChatPublico").child("Mensajes").child(id_mensaje).setValue(nuevo_mensaje)
+        } else {
+            lifecycleScope.launch {
+                var chat = getChat(db_ref, userId)
+                if (chat == null) {
+                    var id_chat = userId
+                    val user = getUser(userId)
+                    var nuevo_chat = Chat(id_chat, userId, user!!.name,user.img)
+                    db_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Chats").child(nuevo_chat.id).setValue(nuevo_chat).await()
 
-        db_ref.child("Users").child("ChatPublico").child("Mensajes").child(id_mensaje).setValue(nuevo_mensaje)
+                    id_chat = FirebaseAuth.getInstance().currentUser!!.uid
+                    nuevo_chat = Chat(id_chat, FirebaseAuth.getInstance().currentUser!!.uid, userActual!!.name,userActual!!.img)
+                    db_ref.child("Users").child(userId).child("Chats").child(nuevo_chat.id).setValue(nuevo_chat).await()
+                    chat = getChat(db_ref, userId)
+                }
+                val id_mensaje = db_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Chats").child(chat!!.id).child("Mensajes").push().key!!
+                val nuevo_mensaje = Mensaje(
+                    id_mensaje,
+                    userActual?.id ?: "",
+                    userActual?.name ?: "",
+                    userId,
+                    userActual?.img ?: "",
+                    mensaje,
+                    fecha_hora
+                )
+                db_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Chats").child(userId).child("Mensajes").child(id_mensaje).setValue(nuevo_mensaje)
+                db_ref.child("Users").child(userId).child("Chats").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Mensajes").child(id_mensaje).setValue(nuevo_mensaje)
+            }
+        }
         mensaje_enviado.setText("")
     }
 
@@ -129,61 +161,95 @@ class MensajeActivity : AppCompatActivity() {
     }
 
     private fun setupMessageListener() {
-        if (userId.isEmpty()) {
-            db_ref.child("Users").child("ChatPublico").child("Mensajes").addChildEventListener(object : ChildEventListener {
-                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        try {
-                            val pojo_mensaje = snapshot.getValue(Mensaje::class.java)
-                            if (pojo_mensaje != null && userActual != null) {
-                                if (pojo_mensaje.id_receptor == pojo_mensaje.id_emisor) {
-                                    pojo_mensaje.imagen_emisor = userActual!!.img
-                                } else {
-                                    val semaforo = CountDownLatch(1)
-                                    db_ref.child("Users").child(pojo_mensaje.id_emisor!!).addListenerForSingleValueEvent(object : ValueEventListener {
-                                        override fun onDataChange(snapshot: DataSnapshot) {
-                                            val user = snapshot.getValue(User::class.java)
-                                            pojo_mensaje.imagen_emisor = user?.img
-                                            semaforo.countDown()
-                                        }
+        val messagesRef = if (userId.isEmpty()) {
+            db_ref.child("Users").child("ChatPublico").child("Mensajes")
+        } else {
+            db_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Chats").child(userId).child("Mensajes")
+        }
 
-                                        override fun onCancelled(error: DatabaseError) {
-                                            println(error.message)
-                                        }
-                                    })
-                                    semaforo.await()
-                                }
-                                withContext(Dispatchers.Main) {
-                                    lista.add(pojo_mensaje)
-                                    lista.sortBy { it.fecha_hora }
-                                    recycler.adapter!!.notifyDataSetChanged()
-                                    if (last_pos < lista.size && last_pos != 1 && last_pos != 100000) {
-                                        recycler.scrollToPosition(last_pos)
-                                    } else {
-                                        recycler.scrollToPosition(lista.size - 1)
-                                    }
-                                }
+        messagesRef.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        val pojo_mensaje = snapshot.getValue(Mensaje::class.java)
+                        if (pojo_mensaje != null && userActual != null) {
+                            if (pojo_mensaje.id_receptor == pojo_mensaje.id_emisor) {
+                                pojo_mensaje.imagen_emisor = userActual!!.img
                             } else {
-                                Log.e("MensajeActivity", "Mensaje is null or userActual is null for snapshot: ${snapshot.key}")
+                                val user = getUser(pojo_mensaje.id_emisor!!)
+                                pojo_mensaje.imagen_emisor = user?.img
                             }
-                        } catch (e: DatabaseException) {
-                            Log.e("MensajeActivity", "Error converting message", e)
+                            withContext(Dispatchers.Main) {
+                                lista.add(pojo_mensaje)
+                                lista.sortBy { it.fecha_hora }
+                                recycler.adapter!!.notifyDataSetChanged()
+                                if (last_pos < lista.size && last_pos != 1 && last_pos != 100000) {
+                                    recycler.scrollToPosition(last_pos)
+                                } else {
+                                    recycler.scrollToPosition(lista.size - 1)
+                                }
+                            }
+                        } else {
+                            Log.e("MensajeActivity", "Mensaje is null or userActual is null for snapshot: ${snapshot.key}")
                         }
+                    } catch (e: DatabaseException) {
+                        Log.e("MensajeActivity", "Error converting message", e)
                     }
                 }
+            }
 
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-                override fun onChildRemoved(snapshot: DataSnapshot) {}
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("MensajeActivity", "Error: ${error.message}")
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("MensajeActivity", "Error: ${error.message}")
+            }
+        })
+    }
+
+    private suspend fun getUser(userId: String): User? {
+        return suspendCancellableCoroutine { continuation ->
+            val userRef = db_ref.child("Users").child(userId)
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val user = snapshot.getValue(User::class.java)
+                    continuation.resume(user)
                 }
-            })
-        } else {
-            // Handle private chat case
+
+                override fun onCancelled(error: DatabaseError) {
+                    continuation.resumeWithException(error.toException())
+                }
+            }
+            userRef.addListenerForSingleValueEvent(listener)
+
+            continuation.invokeOnCancellation {
+                userRef.removeEventListener(listener)
+            }
+        }
+    }
+
+    private suspend fun getChat(db_ref: DatabaseReference, id: String): Chat? {
+        return suspendCancellableCoroutine { continuation ->
+            val chatsRef = db_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Chats").child(id)
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val chat = snapshot.getValue(Chat::class.java)
+                    continuation.resume(chat)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    continuation.resumeWithException(error.toException())
+                }
+            }
+            chatsRef.addListenerForSingleValueEvent(listener)
+
+            continuation.invokeOnCancellation {
+                chatsRef.removeEventListener(listener)
+            }
         }
     }
 }
+
 
 
 

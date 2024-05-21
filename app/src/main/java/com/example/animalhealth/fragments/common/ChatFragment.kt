@@ -12,6 +12,7 @@ import com.example.animalhealth.R
 import com.example.animalhealth.clases.Chat
 import com.google.firebase.database.*
 import com.example.animalhealth.adapters.chatAdapter
+import com.google.firebase.auth.FirebaseAuth
 
 class ChatFragment : Fragment() {
 private lateinit var adapter : chatAdapter
@@ -29,6 +30,19 @@ private lateinit var adapter : chatAdapter
         recycler = view.findViewById(R.id.recyclerChat)
 
         dbRef.child("Users").child("ChatPublico").get().addOnSuccessListener {
+            if (it.exists()) {
+                for (i in it.children) {
+                    val chat = i.getValue(Chat::class.java)
+                    if (chat?.id != "") {
+                        chat_list.add(chat!!)
+                    }
+                    Log.d("CHAT1", chat.toString())
+                }
+                recycler.adapter?.notifyDataSetChanged()
+            }
+        }
+
+        dbRef.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Chats").get().addOnSuccessListener {
             if (it.exists()) {
                 for (i in it.children) {
                     val chat = i.getValue(Chat::class.java)
