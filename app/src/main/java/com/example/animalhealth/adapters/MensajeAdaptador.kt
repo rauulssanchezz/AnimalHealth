@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.example.animalhealth.R
 import com.example.animalhealth.clases.Mensaje
 import com.example.animalhealth.clases.Utilities
+import com.google.firebase.auth.FirebaseAuth
 
 class MensajeAdaptador(private val lista_mensajes: List<Mensaje>, last_pos: Int) : RecyclerView.Adapter<MensajeAdaptador.MensajeViewHolder>() {
     private lateinit var contexto: Context
@@ -35,8 +36,7 @@ class MensajeAdaptador(private val lista_mensajes: List<Mensaje>, last_pos: Int)
             holder.pendientes.visibility = View.VISIBLE
         }
 
-
-        if(item_actual.id_emisor==item_actual.id_receptor){
+        if(item_actual.id_emisor==FirebaseAuth.getInstance().currentUser!!.uid){
             //ES MIO,ASIGNAR A LA DERECHA Y YO
             holder.otro.text=""
             holder.hora_otro.text=""
@@ -49,7 +49,7 @@ class MensajeAdaptador(private val lista_mensajes: List<Mensaje>, last_pos: Int)
                 .into(holder.imagen_yo)
             holder.hora_yo.text=item_actual.fecha_hora
             holder.yo.text=item_actual.contenido
-
+            holder.nombreYo.text = ""
         }else{
             //ES DE OTRO ASIGNAR A LA IZQUIERDA Y NOMBRE
             holder.yo.text=""
@@ -63,6 +63,7 @@ class MensajeAdaptador(private val lista_mensajes: List<Mensaje>, last_pos: Int)
                 .into(holder.imagen_otro)
             holder.hora_otro.text=item_actual.fecha_hora
             holder.otro.text=item_actual.contenido
+            holder.nombreYo.text = item_actual.nombre_emisor
         }
 
 
@@ -82,5 +83,6 @@ class MensajeAdaptador(private val lista_mensajes: List<Mensaje>, last_pos: Int)
         val hora_yo: TextView = itemView.findViewById(R.id.hora_yo)
         val hora_otro: TextView = itemView.findViewById(R.id.hora_otro)
         val pendientes: ConstraintLayout = itemView.findViewById(R.id.pendientes_mens)
+        val nombreYo = itemView.findViewById<TextView>(R.id.otro_nombre)
     }
 }

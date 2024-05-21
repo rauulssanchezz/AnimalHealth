@@ -26,15 +26,25 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/yo"
+        android:id="@+id/otro_nombre"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/otro"
+        app:layout_constraintTop_toTopOf="@id/imagen_otro"
+        app:layout_constraintStart_toEndOf="@id/imagen_otro"
+        android:gravity="start"
+        android:layout_margin="5dp"
+        />
+    <TextView
+        android:id="@+id/yo"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="70dp"
         android:background="@drawable/bt_round_transparent_chat"
         android:text="TextView"
         android:textSize="20sp"
-
+        android:gravity="end"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -46,6 +56,7 @@
         android:layout_marginBottom="0dp"
         android:textSize="12sp"
         android:textStyle="italic"
+        app:layout_constraintTop_toBottomOf="@id/otro"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -64,7 +75,8 @@
 
     <TextView
         android:id="@+id/otro"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="start"
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
         android:layout_marginTop="48dp"

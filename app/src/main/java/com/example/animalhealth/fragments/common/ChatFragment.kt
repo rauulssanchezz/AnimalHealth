@@ -1,6 +1,7 @@
 package com.example.animalhealth.fragments.common
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,18 +26,21 @@ private lateinit var adapter : chatAdapter
 
         var chat_list = mutableListOf<Chat>()
         var recycler : RecyclerView
+        recycler = view.findViewById(R.id.recyclerChat)
 
-        dbRef.child("Users").child("Chat_Publico").get().addOnSuccessListener {
+        dbRef.child("Users").child("ChatPublico").get().addOnSuccessListener {
             if (it.exists()) {
                 for (i in it.children) {
                     val chat = i.getValue(Chat::class.java)
-                    chat_list.add(chat!!)
-                    adapter.notifyDataSetChanged()
+                    if (chat?.id != "") {
+                        chat_list.add(chat!!)
+                    }
+                    Log.d("CHAT1", chat.toString())
                 }
+                recycler.adapter?.notifyDataSetChanged()
             }
         }
-
-        recycler = view.findViewById(R.id.recyclerChat)
+        Log.d("CHAT", chat_list.toString())
         adapter = chatAdapter(chat_list)
         recycler.adapter = adapter
         recycler.layoutManager = LinearLayoutManager(requireActivity())

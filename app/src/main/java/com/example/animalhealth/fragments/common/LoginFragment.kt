@@ -59,11 +59,11 @@ class LoginFragment : Fragment(){
             password=passwordEditText.text.toString()
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(context, "Por favor, rellena todos los campos", Toast.LENGTH_SHORT).show()
-            }else if (!pulsado){
-                pulsado=true
+            }else{
                 val auth = FirebaseAuth.getInstance()
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                    if (it.isSuccessful) {
+                    if (it.isSuccessful && !pulsado) {
+                        pulsado= true
                         navController.navigate(R.id.action_loginFragment_to_loadingFragment)
                     } else {
                         // Si el inicio de sesión falla, muestra un mensaje de error
