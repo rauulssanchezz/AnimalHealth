@@ -18,11 +18,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.animalhealth.R
 import com.example.animalhealth.adapters.PetSpinnerAdapter
+import com.example.animalhealth.clases.Blocks
 import com.example.animalhealth.clases.Booking
+import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.Pet
 import com.example.animalhealth.clases.User
 import com.example.animalhealth.clases.Utilities
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -40,14 +43,14 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 class ClientAddBookingFragment : Fragment() {
-
+private var startHour = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_client_add_booking, container, false)
         val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
-        var startHour = ""
+
         val dbReference = Firebase.database.reference
         val backButton = view.findViewById<ImageView>(R.id.bookingBackButton)
         val calendarView = view.findViewById<CalendarView>(R.id.bookingCalendar)
@@ -55,6 +58,8 @@ class ClientAddBookingFragment : Fragment() {
         var reason = ""
         val navController = findNavController()
         val clinicId = sharedPreferences.getString("clinicId", "").toString()
+        var vet = User()
+        var block = false
         var pet = Pet()
         val actualUser = FirebaseAuth.getInstance().currentUser?.uid.toString()
         var user = User()
@@ -68,6 +73,32 @@ class ClientAddBookingFragment : Fragment() {
         val date = Calendar.getInstance()
         val actualDate = "${date.get(Calendar.DAY_OF_MONTH)}/${date.get(Calendar.MONTH) + 1}/${date.get(Calendar.YEAR)}"
 
+        dbReference.child("Clinics").get().addOnSuccessListener { clinicsSnapshot ->
+            clinicsSnapshot.children.forEach { clinicSnapshot ->
+                val clinic = clinicSnapshot.getValue(Clinic::class.java)
+                if (clinic?.id == clinicId) {
+                    val vetId = clinic.vetId
+                    dbReference.child("Users").child(vetId).child("Blocks").get().addOnSuccessListener { blocksSnapshot ->
+                        val blocks = blocksSnapshot.getValue(Blocks::class.java)
+                        if (blocks?.id == user.id) {
+                            // El usuario está bloqueado
+                            block = true
+                            Toast.makeText(context, "No puedes reservar en esta clínica porque has sido bloqueado", Toast.LENGTH_LONG).show()
+                            navController.navigate(R.id.action_clientAddBookingFragment_to_clientClinicsFragment)
+                        } else {
+                            // El usuario no está bloqueado
+                            block = false
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (block){
+            Toast.makeText(context, "No puedes reservar en esta clinica porque has sido bloqueado", Toast.LENGTH_LONG).show()
+            navController.navigate(R.id.action_clientAddBookingFragment_to_clientClinicsFragment)
+        }
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val selectedDate = "$dayOfMonth/${month + 1}/$year"
             if (actualDate >= selectedDate) {
@@ -134,10 +165,13 @@ class ClientAddBookingFragment : Fragment() {
                 Toast.makeText(context, "Por favor llene todos los campos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             } else {
+                // Dentro de la función addBookingButton.setOnClickListener
                 val bookingId = dbReference.child("Bookings").push().key
                 val booking = Booking(
-                    bookingId!!, reason, bookingDate, startHour, clinicId, FirebaseAuth.getInstance().uid.toString(), pet.id, user.img
+                    bookingId!!, reason, bookingDate, startHour, clinicId,
+                    FirebaseAuth.getInstance().uid.toString(), pet.id, user.img,
                 )
+
                 viewLifecycleOwner.lifecycleScope.launch {
                     Utilities.saveBooking(booking, dbReference)
                     withContext(Dispatchers.Main) {
@@ -187,8 +221,8 @@ class ClientAddBookingFragment : Fragment() {
 
         startHourSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedHour = parent?.getItemAtPosition(position).toString()
-                if (ocupatedHours.contains(selectedHour)) {
+                startHour = parent?.getItemAtPosition(position).toString()
+                if (ocupatedHours.contains(startHour)) {
                     Toast.makeText(context, "Esta hora ya está reservada", Toast.LENGTH_SHORT).show()
                 }
             }

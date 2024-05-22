@@ -28,37 +28,42 @@ class ClientBookingFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_client_booking, container, false)
 
-        var bookingList = mutableListOf<Booking>()
-        val recycler = view.findViewById<RecyclerView>(R.id.bookingRecyclerViewClient)
         val dbRef = Firebase.database.reference
-
-        dbRef.child("Bookings")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    bookingList.clear()
-                    snapshot.children.forEach { hijo: DataSnapshot?
-                        ->
-                        val pojo_clinic = hijo?.getValue(Booking::class.java)
-                        Log.d("Booking", pojo_clinic.toString())
-                        if (pojo_clinic?.ownerId == FirebaseAuth.getInstance().currentUser!!.uid) {
-                            bookingList.add(pojo_clinic!!)
-                        }
-                    }
-                    recycler.adapter?.notifyDataSetChanged()
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    println(error.message)
-                }
-            })
-
+        val recycler = view.findViewById<RecyclerView>(R.id.bookingRecyclerViewClient)
+        val bookingList = mutableListOf<Booking>()
         val adapter = BookingAdapter(bookingList)
+
         recycler.layoutManager = LinearLayoutManager(context)
         recycler.adapter = adapter
 
+        // Leer los datos desde Firebase y agregarlos a bookingList
+        dbRef.child("Bookings").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                bookingList.clear()
+                snapshot.children.forEach { child ->
+                    val booking = child.getValue(Booking::class.java)
+                    if (booking?.ownerId == FirebaseAuth.getInstance().currentUser!!.uid) {
+                        booking?.let {
+                            bookingList.add(it)
+                        }
+                    }
+                }
+                // Ordenar las reservas por fecha en formato "YYYY-MM-DD"
+                bookingList.sortByDescending { it.date }
+
+                // Notificar al adaptador sobre los cambios en la lista
+                adapter.notifyDataSetChanged()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", error.message)
+            }
+        })
 
         // Inflate the layout for this fragment
         return view
     }
+
+
 
 }

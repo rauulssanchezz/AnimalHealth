@@ -17,6 +17,9 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.math.atan2
@@ -41,6 +44,15 @@ class Utilities {
             db_ref.child("Clinics").child(clinic.id).setValue(clinic).await()
         }
 
+        fun isDateBeforeToday(dateString: String): Boolean {
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val today = Calendar.getInstance().time // Obtener la fecha actual
+
+            val selectedDate = dateFormat.parse(dateString) // Convertir la cadena de fecha a Date
+
+            // Comparar si la fecha seleccionada es anterior a hoy
+            return selectedDate != null && selectedDate.before(today)
+        }
         fun calcularDistancia(latitud1: Double, longitud1: Double, latitud2: Double, longitud2: Double): Double {
             val radioTierra = 6371 // Radio de la Tierra en kilómetros
             val deltaLatitud = Math.toRadians(latitud2 - latitud1)

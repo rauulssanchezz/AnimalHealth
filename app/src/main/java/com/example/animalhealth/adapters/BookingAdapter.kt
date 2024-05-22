@@ -13,12 +13,15 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.animalhealth.R
 import com.example.animalhealth.activities.client.ClientClinicInfoActivity
+import com.example.animalhealth.clases.Blocks
 import com.example.animalhealth.clases.Booking
 import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.Pet
@@ -63,21 +66,63 @@ class BookingAdapter(private val books_list:MutableList<Booking>): RecyclerView.
         val date : TextView = itemView.findViewById(R.id.itemBookingDate)
         val clinic : TextView = itemView.findViewById(R.id.itemBookingClinic)
         val cancel : AppCompatButton = itemView.findViewById(R.id.itemBookingCancelButton)
+        val status : TextView = itemView.findViewById(R.id.itemBookingStatus)
+        val block : ImageView = itemView.findViewById(R.id.itemBookingBlockUser)
     }
 
 
     override fun onBindViewHolder(holder: BookingViewHolder, position: Int) {
         val actual_item = filter_list[position]
+        val lifecycleScope = (holder.itemView.context as? FragmentActivity)?.lifecycleScope
+        var user = User()
+        lifecycleScope?.launch {
+            try {
+                user = Utilities.obtainUser(dbRef)!!
+                if (user?.type == "Veterinario") {
+                    holder.block.visibility = View.VISIBLE
+                }
+            } catch (e: Exception) {
+                Log.e("BookingAdapter", "Error al obtener usuario: ${e.message}")
+            }
+        }
+
+        if (user?.type == "Veterinario"){
+            holder.block.visibility = View.VISIBLE
+        }
+
+        holder.block.setOnClickListener {
+            var block = Blocks(actual_item.ownerId)
+            dbRef.child("Users").child(user!!.id).child("Blocks").setValue(block)
+            dbRef.child("Bookings").get().addOnSuccessListener { snapshot ->
+                snapshot.children.forEach { child ->
+                    val booking = child.getValue(Booking::class.java)
+                    if (booking?.ownerId == actual_item.ownerId) {
+                        dbRef.child("Bookings").child(booking.id).removeValue()
+                    }
+                }
+            }
+            filter_list.removeAt(position)
+            notifyItemRemoved(position)
+        }
 
         // Establecer valores iniciales o por defecto
         holder.time.text = actual_item.startHour
         holder.reason.text = actual_item.bookingReason
         holder.date.text = actual_item.date
 
-        holder.cancel.setOnClickListener {
-            dbRef.child("Bookings").child(actual_item.id).removeValue()
-            filter_list.removeAt(position)
-            notifyItemRemoved(position)
+        // Verificar si la fecha de la reserva es posterior a ayer
+        if (Utilities.isDateBeforeToday(actual_item.date)) {
+            holder.status.text = "Terminada"
+            holder.cancel.visibility = View.GONE // Ocultar el botón de cancelar
+            holder.status.visibility = View.VISIBLE // Mostrar el texto de estado
+        } else {
+            holder.status.visibility = View.GONE // Ocultar el texto de estado
+            holder.cancel.visibility = View.VISIBLE // Mostrar el botón de cancelar
+            holder.cancel.setOnClickListener {
+                dbRef.child("Bookings").child(actual_item.id).removeValue()
+                filter_list.removeAt(position)
+                notifyItemRemoved(position)
+            }
         }
 
         // Obtener y establecer el nombre del dueño
@@ -107,6 +152,7 @@ class BookingAdapter(private val books_list:MutableList<Booking>): RecyclerView.
             .transition(Utilities.transition)
             .into(holder.photo)
     }
+
 
     override fun getFilter(): Filter {
         return object : Filter() {
