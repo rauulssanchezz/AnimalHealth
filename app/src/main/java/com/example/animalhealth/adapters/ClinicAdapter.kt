@@ -78,14 +78,18 @@ class ClinicAdapter(private val clinic_list: MutableList<Clinic>) : RecyclerView
         holder.phone.text = actual_item.phone
 
         holder.chatButton.setOnClickListener {
-            var intent = Intent(context, MensajeActivity::class.java)
-            intent.putExtra("userId", actual_item.vetId)
-            context.startActivity(intent)
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                var intent = Intent(context, MensajeActivity::class.java)
+                intent.putExtra("userId", actual_item.vetId)
+                context.startActivity(intent)
+            })
         }
 
         holder.booking.setOnClickListener {
-            navController.navigate(R.id.action_clientClinicsFragment_to_clientBookingFragment)
-            sharedPreferences.edit().putString("clinicId", actual_item.id).apply()
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                navController.navigate(R.id.action_clientClinicsFragment_to_clientBookingFragment)
+                sharedPreferences.edit().putString("clinicId", actual_item.id).apply()
+            })
         }
 
         // Launching a coroutine to fetch favorite clinics
@@ -99,14 +103,18 @@ class ClinicAdapter(private val clinic_list: MutableList<Clinic>) : RecyclerView
             }
 
             holder.fav.setOnClickListener {
-                handleFavoriteClick(actual_item, holder, fav)
+                Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                    handleFavoriteClick(actual_item, holder, fav)
+                })
             }
         }
 
         holder.itemView.setOnClickListener {
-            val newIntent = Intent(context, ClientClinicInfoActivity::class.java)
-            newIntent.putExtra("clinic", actual_item)
-            context.startActivity(newIntent)
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                val newIntent = Intent(context, ClientClinicInfoActivity::class.java)
+                newIntent.putExtra("clinic", actual_item)
+                context.startActivity(newIntent)
+            })
         }
 
         val URL: String? = if (actual_item.photo.isEmpty()) null else actual_item.photo
@@ -115,28 +123,33 @@ class ClinicAdapter(private val clinic_list: MutableList<Clinic>) : RecyclerView
 
     private fun handleFavoriteClick(actual_item: Clinic, holder: ClinicViewHolder, fav: String) {
         var updatedFav = fav
-        val favs = updatedFav.split(",")
+        val favs = updatedFav.split(",").toMutableList()
 
         if (favs.contains(actual_item.id)) {
-            updatedFav = updatedFav.replace("${actual_item.id},", "")
+            favs.remove(actual_item.id)
             holder.fav.setImageResource(R.drawable.baseline_favorite_border_24)
         } else {
-            updatedFav = "$updatedFav${actual_item.id},"
+            favs.add(actual_item.id)
             holder.fav.setImageResource(R.drawable.baseline_favorite_24)
         }
 
         val id = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val name = sharedPreferences.getString("Name", "") ?: ""
-        val email = sharedPreferences.getString("Email", "") ?: ""
-        val password = sharedPreferences.getString("Password", "") ?: ""
-        val type = sharedPreferences.getString("Type", "") ?: ""
-        val img = sharedPreferences.getString("Img", "") ?: ""
 
         adapterScope.launch {
             val db_ref = FirebaseDatabase.getInstance().reference
-            db_ref.child("Users").child(id).setValue(User(id, name, email, password, type, img, updatedFav))
+            db_ref.child("Users").child(id).child("favClinics").setValue(favs.joinToString(","))
+                .addOnSuccessListener {
+                    // Actualizar la lista de favoritos localmente o notificar al adaptador
+                    notifyDataSetChanged()
+                    Toast.makeText(context, "Lista de favoritos actualizada correctamente", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Error al actualizar la lista de favoritos: ${e.message}", Toast.LENGTH_SHORT).show()
+                    // Manejar el error adecuadamente
+                }
         }
     }
+
 
     private suspend fun obtainFavClinics(dbRef: DatabaseReference): String {
         return suspendCancellableCoroutine { continuation ->

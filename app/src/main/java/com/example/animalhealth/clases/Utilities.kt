@@ -3,6 +3,7 @@ package com.example.animalhealth.clases
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.view.View
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.animalhealth.R
@@ -134,10 +135,6 @@ class Utilities {
             db_ref.child("Bookings").child(booking.id).setValue(booking).await()
         }
 
-        suspend fun saveReview(reviews: Reviews,db_ref:DatabaseReference){
-            db_ref.child("Reviews").child(reviews.clinicId!!).child(reviews.id!!).setValue(reviews).await()
-        }
-
         fun load_animation(contex: Context): CircularProgressDrawable {
             val animation = CircularProgressDrawable(contex)
             animation.strokeWidth = 5f
@@ -153,8 +150,21 @@ class Utilities {
                 .error(R.drawable.baseline_error_outline_24)
             return options
         }
+
+        fun animation(view: View, scale1: Float, scale2: Float, time: Long, onAnimationEnd: Runnable?) {
+            val animator = view.animate().apply {
+                scaleY(scale1)
+                scaleX(scale1)
+                duration = time
+            }.withEndAction {
+                view.animate().apply {
+                    scaleY(scale2)
+                    scaleX(scale2)
+                    duration = time
+                }
+                onAnimationEnd?.run()
+            }
+        }
     }
 
-
-
-}
+    }

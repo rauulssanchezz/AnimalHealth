@@ -92,17 +92,20 @@ class BookingAdapter(private val books_list:MutableList<Booking>): RecyclerView.
 
         holder.block.setOnClickListener {
             var block = Blocks(actual_item.ownerId)
-            dbRef.child("Users").child(user!!.id).child("Blocks").setValue(block)
-            dbRef.child("Bookings").get().addOnSuccessListener { snapshot ->
-                snapshot.children.forEach { child ->
-                    val booking = child.getValue(Booking::class.java)
-                    if (booking?.ownerId == actual_item.ownerId) {
-                        dbRef.child("Bookings").child(booking.id).removeValue()
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                dbRef.child("Users").child(user!!.id).child("Blocks").setValue(block)
+                dbRef.child("Bookings").get().addOnSuccessListener { snapshot ->
+                    snapshot.children.forEach { child ->
+                        val booking = child.getValue(Booking::class.java)
+                        if (booking?.ownerId == actual_item.ownerId) {
+                            dbRef.child("Bookings").child(booking.id).removeValue()
+                        }
                     }
                 }
-            }
-            filter_list.removeAt(position)
-            notifyItemRemoved(position)
+                filter_list.removeAt(position)
+                notifyItemRemoved(position)
+            })
+
         }
 
         // Establecer valores iniciales o por defecto
@@ -119,9 +122,11 @@ class BookingAdapter(private val books_list:MutableList<Booking>): RecyclerView.
             holder.status.visibility = View.GONE // Ocultar el texto de estado
             holder.cancel.visibility = View.VISIBLE // Mostrar el botón de cancelar
             holder.cancel.setOnClickListener {
-                dbRef.child("Bookings").child(actual_item.id).removeValue()
-                filter_list.removeAt(position)
-                notifyItemRemoved(position)
+                Utilities.animation(it, 0.95f, 1.0f, 100, Runnable {
+                    dbRef.child("Bookings").child(actual_item.id).removeValue()
+                    filter_list.removeAt(position)
+                    notifyItemRemoved(position)
+                })
             }
         }
 

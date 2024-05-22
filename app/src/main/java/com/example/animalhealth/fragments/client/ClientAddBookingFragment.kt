@@ -110,7 +110,9 @@ private var startHour = ""
         }
 
         backButton.setOnClickListener {
-            navController.navigate(R.id.action_clientAddBookingFragment_to_clientClinicsFragment)
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                navController.navigate(R.id.action_clientAddBookingFragment_to_clientClinicsFragment)
+            })
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -161,9 +163,9 @@ private var startHour = ""
 
         val addBookingButton = view.findViewById<AppCompatButton>(R.id.addBookingButton)
         addBookingButton.setOnClickListener {
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
             if (bookingDate.isEmpty() || startHour.isEmpty() || pet.id.isEmpty() || reason.isEmpty()) {
                 Toast.makeText(context, "Por favor llene todos los campos", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
             } else {
                 // Dentro de la función addBookingButton.setOnClickListener
                 val bookingId = dbReference.child("Bookings").push().key
@@ -180,8 +182,8 @@ private var startHour = ""
                     }
                 }
             }
+        })
         }
-
         return view
     }
     private fun loadBookingsForDate(

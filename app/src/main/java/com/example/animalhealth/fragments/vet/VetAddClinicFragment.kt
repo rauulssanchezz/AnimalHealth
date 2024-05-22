@@ -65,61 +65,89 @@ class VetAddClinicFragment : Fragment() {
         phoneEditText = view.findViewById(R.id.editTextPhone)
 
         buttonSave.setOnClickListener {
-            if (nameEditText.text.toString().isEmpty() || streetEditText.text.toString()
-                    .isEmpty() || postalCodeEditText.text.toString().isEmpty() || phoneEditText.text.toString().isEmpty()
-            ) {
-                nameEditText.setError("Campo obligatorio")
-                streetEditText.setError("Campo obligatorio")
-                postalCodeEditText.setError("Campo obligatorio")
-                phoneEditText.setError("Campo obligatorio")
-            } else {
-                name = nameEditText.text.toString()
-                phone = phoneEditText.text.toString()
-                location = streetEditText.text.toString() + " " + postalCodeEditText.text.toString()
-                val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                try {
-                    val addresses = geocoder.getFromLocationName(location, 1)
-                    if (addresses!!.isNotEmpty()) {
-                        val address = addresses[0]
-                        val latitude = address.latitude
-                        val longitude = address.longitude
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                if (nameEditText.text.toString().isEmpty() || streetEditText.text.toString()
+                        .isEmpty() || postalCodeEditText.text.toString()
+                        .isEmpty() || phoneEditText.text.toString().isEmpty()
+                ) {
+                    nameEditText.setError("Campo obligatorio")
+                    streetEditText.setError("Campo obligatorio")
+                    postalCodeEditText.setError("Campo obligatorio")
+                    phoneEditText.setError("Campo obligatorio")
+                } else {
+                    name = nameEditText.text.toString()
+                    phone = phoneEditText.text.toString()
+                    location =
+                        streetEditText.text.toString() + " " + postalCodeEditText.text.toString()
+                    val geocoder = Geocoder(requireContext(), Locale.getDefault())
+                    try {
+                        val addresses = geocoder.getFromLocationName(location, 1)
+                        if (addresses!!.isNotEmpty()) {
+                            val address = addresses[0]
+                            val latitude = address.latitude
+                            val longitude = address.longitude
 
-                        val clinicId = dbRef.push().key
+                            val clinicId = dbRef.push().key
 
-                        GlobalScope.launch {
+                            GlobalScope.launch {
 
-                            if (urlPhoto!=null) {
-                                val urlPhotoFb = Utilities.savePhoto(urlPhoto!!, "Clinics", clinicId!!)
-                                val clinic =
-                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,Firebase.auth.currentUser!!.uid, urlPhotoFb,phone,postalCodeEditText.text.toString())
-                                Utilities.createClinic(clinic, dbRef)
-                            }else{
-                                val clinic =
-                                    Clinic(clinicId!!, name, 0.0f, location, latitude, longitude,Firebase.auth.currentUser!!.uid,phone,postalCodeEditText.text.toString())
-                                Utilities.createClinic(clinic, dbRef)
-                            }
+                                if (urlPhoto != null) {
+                                    val urlPhotoFb =
+                                        Utilities.savePhoto(urlPhoto!!, "Clinics", clinicId!!)
+                                    val clinic =
+                                        Clinic(
+                                            clinicId!!,
+                                            name,
+                                            0.0f,
+                                            location,
+                                            latitude,
+                                            longitude,
+                                            Firebase.auth.currentUser!!.uid,
+                                            urlPhotoFb,
+                                            phone,
+                                            postalCodeEditText.text.toString()
+                                        )
+                                    Utilities.createClinic(clinic, dbRef)
+                                } else {
+                                    val clinic =
+                                        Clinic(
+                                            clinicId!!,
+                                            name,
+                                            0.0f,
+                                            location,
+                                            latitude,
+                                            longitude,
+                                            Firebase.auth.currentUser!!.uid,
+                                            phone,
+                                            postalCodeEditText.text.toString()
+                                        )
+                                    Utilities.createClinic(clinic, dbRef)
+                                }
 
 
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Clinica añadida",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                navController.navigate(R.id.vetAddClinicFragment_to_vetClinicFragment)
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Clinica añadida",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    navController.navigate(R.id.vetAddClinicFragment_to_vetClinicFragment)
+                                }
                             }
                         }
-                    }
 
-                } catch (e: Exception) {
-                    streetEditText.setError("Ubicación no encontrada")
-                    postalCodeEditText.setError("Ubicación no encontrada")
+                    } catch (e: Exception) {
+                        streetEditText.setError("Ubicación no encontrada")
+                        postalCodeEditText.setError("Ubicación no encontrada")
+                    }
                 }
-            }
+            })
         }
 
         photo.setOnClickListener {
-            galeryAcces.launch("image/*")
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                galeryAcces.launch("image/*")
+            })
         }
 
         return view

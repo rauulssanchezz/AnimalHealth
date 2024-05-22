@@ -59,9 +59,11 @@ class chatAdapter(private val chat_list:MutableList<Chat>): RecyclerView.Adapter
         holder.name.text = actual_item.nombreDestinatario
 
         holder.itemView.setOnClickListener {
-            val newIntent = Intent(context, MensajeActivity::class.java)
-            newIntent.putExtra("userId", actual_item.idDestinatario)
-            context.startActivity(newIntent)
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                val newIntent = Intent(context, MensajeActivity::class.java)
+                newIntent.putExtra("userId", actual_item.idDestinatario)
+                context.startActivity(newIntent)
+            })
         }
 
         // Cargar la imagen del dueño usando Glide

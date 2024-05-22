@@ -14,6 +14,7 @@ import com.example.animalhealth.R
 import com.example.animalhealth.adapters.PetsAdapter
 import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.Pet
+import com.example.animalhealth.clases.Utilities
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -62,8 +63,10 @@ class ClientPetFragment : Fragment() {
 
         Log.d("Boton","listo")
         addPet!!.setOnClickListener {
-            Log.d("Boton","pulsado")
-            navController.navigate(R.id.action_clientPetFragment_to_clientAddPetFragment)
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                Log.d("Boton", "pulsado")
+                navController.navigate(R.id.action_clientPetFragment_to_clientAddPetFragment)
+            })
         }
         return view
     }

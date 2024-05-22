@@ -16,6 +16,7 @@ import com.example.animalhealth.R
 import com.example.animalhealth.adapters.BookingAdapter
 import com.example.animalhealth.clases.Booking
 import com.example.animalhealth.clases.Clinic
+import com.example.animalhealth.clases.Utilities
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -56,16 +57,18 @@ class VetBookingFragment : Fragment() {
         dateText.text = actualDate
 
         dateCardView.setOnClickListener {
-            Log.d("Calendar", "Clicked")
-            if (calendarView.visibility == View.VISIBLE) {
-                calendarView.visibility = View.GONE
-                recycler.visibility = View.VISIBLE
-                Log.d("Calendar", "Gone")
-            } else {
-                calendarView.visibility = View.VISIBLE
-                recycler.visibility = View.GONE
-                Log.d("Calendar", "Visible")
-            }
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                Log.d("Calendar", "Clicked")
+                if (calendarView.visibility == View.VISIBLE) {
+                    calendarView.visibility = View.GONE
+                    recycler.visibility = View.VISIBLE
+                    Log.d("Calendar", "Gone")
+                } else {
+                    calendarView.visibility = View.VISIBLE
+                    recycler.visibility = View.GONE
+                    Log.d("Calendar", "Visible")
+                }
+            })
         }
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->

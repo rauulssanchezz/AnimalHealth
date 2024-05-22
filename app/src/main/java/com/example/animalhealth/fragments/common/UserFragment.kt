@@ -62,14 +62,18 @@ class UserFragment : Fragment() {
         val user = FirebaseAuth.getInstance().currentUser
 
         settingsButton.setOnClickListener {
-            Log.d("SETTINGS", "SETTINGS")
-            showThemeMenu(it)
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                Log.d("SETTINGS", "SETTINGS")
+                showThemeMenu(it)
+            })
         }
 
         Glide.with(requireContext()).load(beforeUrl_img).apply(Utilities.glideOptions(requireContext())).transition(Utilities.transition).into(photo)
 
         photo.setOnClickListener {
-            galeryAcces.launch("image/*")
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                galeryAcces.launch("image/*")
+            })
         }
 
         Log.d("URL", url_photo.toString())
@@ -80,53 +84,69 @@ class UserFragment : Fragment() {
         userPasswordEditText.setText(password)
 
         saveChangesButton.setOnClickListener {
-            name = userNameEditText.text.toString()
-            if (name == "") {
-                Toast.makeText(requireContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
-            }else {
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                name = userNameEditText.text.toString()
+                if (name == "") {
+                    Toast.makeText(
+                        requireContext(),
+                        "El nombre no puede estar vacío",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
 
-                GlobalScope.launch {
-                    var url_photo_firebase = String()
-                    if (beforeName == name && url_photo == null) {
-                        GlobalScope.launch(Main) {
-                            Toast.makeText(requireContext(), "No se han realizado cambios", Toast.LENGTH_SHORT).show()
+                    GlobalScope.launch {
+                        var url_photo_firebase = String()
+                        if (beforeName == name && url_photo == null) {
+                            GlobalScope.launch(Main) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "No se han realizado cambios",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            return@launch
                         }
-                        return@launch
-                    }
-                    if (url_photo == null) {
-                        url_photo_firebase = url_img
-                    } else {
-                        url_photo_firebase =
-                            Utilities.savePhoto(url_photo!!, "Users", user!!.uid)
-                    }
-
-                    Utilities.createUser(
-                        userEmailEditText.text.toString(),
-                        userPasswordEditText.text.toString(),
-                        userNameEditText.text.toString(),
-                        url_photo_firebase,
-                        userTypeEditText.text.toString(),
-                        favClinics!!
-                    )
-
-                    GlobalScope.launch(Dispatchers.Main) {
-                        with(sharedPreferences.edit()) {
-                            putString("Img", url_photo_firebase.toString())
-                            putString("Name", userNameEditText.text.toString())
-                            apply()
+                        if (url_photo == null) {
+                            url_photo_firebase = url_img
+                        } else {
+                            url_photo_firebase =
+                                Utilities.savePhoto(url_photo!!, "Users", user!!.uid)
                         }
-                        Toast.makeText(requireContext(), "Cambios guardados", Toast.LENGTH_SHORT).show()
-                    }
 
+                        Utilities.createUser(
+                            userEmailEditText.text.toString(),
+                            userPasswordEditText.text.toString(),
+                            userNameEditText.text.toString(),
+                            url_photo_firebase,
+                            userTypeEditText.text.toString(),
+                            favClinics!!
+                        )
+
+                        GlobalScope.launch(Dispatchers.Main) {
+                            with(sharedPreferences.edit()) {
+                                putString("Img", url_photo_firebase.toString())
+                                putString("Name", userNameEditText.text.toString())
+                                apply()
+                            }
+                            Toast.makeText(
+                                requireContext(),
+                                "Cambios guardados",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                    }
                 }
-            }
+            })
         }
 
         logOutButton.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-            Toast.makeText(requireContext(), "Sesión cerrada", Toast.LENGTH_SHORT).show()
-            val newIntent = Intent(requireContext(), LoginActivity::class.java)
-            startActivity(newIntent)
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                FirebaseAuth.getInstance().signOut()
+                Toast.makeText(requireContext(), "Sesión cerrada", Toast.LENGTH_SHORT).show()
+                val newIntent = Intent(requireContext(), LoginActivity::class.java)
+                startActivity(newIntent)
+            })
         }
 
         return view

@@ -48,30 +48,38 @@ class LoginFragment : Fragment(){
         textView.paintFlags = textView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
         textView.setOnClickListener {
-            val navController = findNavController()
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                val navController = findNavController()
 
-            // Activa la acción de navegación para ir al Fragment principal
-            navController.navigate(R.id.action_loginFragment_to_registerFragment)
+                // Activa la acción de navegación para ir al Fragment principal
+                navController.navigate(R.id.action_loginFragment_to_registerFragment)
+            })
         }
 
         buttonLogin.setOnClickListener {
-            email=emailEditText.text.toString()
-            password=passwordEditText.text.toString()
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(context, "Por favor, rellena todos los campos", Toast.LENGTH_SHORT).show()
-            }else{
-                val auth = FirebaseAuth.getInstance()
-                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                    if (it.isSuccessful && !pulsado) {
-                        pulsado= true
-                        navController.navigate(R.id.action_loginFragment_to_loadingFragment)
-                    } else {
-                        // Si el inicio de sesión falla, muestra un mensaje de error
-                        Toast.makeText(context, "Error al iniciar sesión", Toast.LENGTH_SHORT)
-                            .show()
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                email = emailEditText.text.toString()
+                password = passwordEditText.text.toString()
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(
+                        context,
+                        "Por favor, rellena todos los campos",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    val auth = FirebaseAuth.getInstance()
+                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+                        if (it.isSuccessful && !pulsado) {
+                            pulsado = true
+                            navController.navigate(R.id.action_loginFragment_to_loadingFragment)
+                        } else {
+                            // Si el inicio de sesión falla, muestra un mensaje de error
+                            Toast.makeText(context, "Error al iniciar sesión", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }
                 }
-            }
+            })
         }
 
         return view

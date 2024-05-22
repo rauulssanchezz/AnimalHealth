@@ -42,6 +42,7 @@ class ClientAddPetFragment : Fragment() {
     private lateinit var ageEditText: TextInputEditText
     private lateinit var weightEditText: TextInputEditText
     private lateinit var savePet: Button
+    private lateinit var back : ImageView
 
     // Variables para los CheckBoxes
     private lateinit var vaccineCheckBoxes: List<CheckBox>
@@ -76,6 +77,13 @@ class ClientAddPetFragment : Fragment() {
         ageEditText = view.findViewById(R.id.editTextAge)
         weightEditText = view.findViewById(R.id.editTextWeight)
         savePet = view.findViewById(R.id.buttonSave)
+        back = view.findViewById(R.id.petBackButton)
+
+        back.setOnClickListener {
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                navController.navigate(R.id.action_clientAddPetFragment_to_clientPetFragment)
+            })
+        }
 
         // Inicializar los CheckBoxes de vacunas
         vaccineCheckBoxes = listOf(
@@ -126,87 +134,91 @@ class ClientAddPetFragment : Fragment() {
         }
 
         savePet.setOnClickListener {
-            name = nameEditText.text.toString().trim().capitalize()
-            ilness = ilnessEditText.text.toString().trim().capitalize()
-            age = ageEditText.text.toString().trim().capitalize()
-            weight = weightEditText.text.toString().trim().capitalize()
-            owner = FirebaseAuth.getInstance().currentUser!!.uid.toString()
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                name = nameEditText.text.toString().trim().capitalize()
+                ilness = ilnessEditText.text.toString().trim().capitalize()
+                age = ageEditText.text.toString().trim().capitalize()
+                weight = weightEditText.text.toString().trim().capitalize()
+                owner = FirebaseAuth.getInstance().currentUser!!.uid.toString()
 
-            // Obtener vacunas seleccionadas
-            vaccines = vaccineCheckBoxes.filter { it.isChecked }
-                .joinToString(separator = "\n") { it.text.toString() }
+                // Obtener vacunas seleccionadas
+                vaccines = vaccineCheckBoxes.filter { it.isChecked }
+                    .joinToString(separator = "\n") { it.text.toString() }
 
-            if (vaccines.isBlank()) {
-                vaccines = "No tiene vacunas"
-            }
-
-            if (
-                name.isNotEmpty() &&
-                type.isNotEmpty() &&
-                breed.isNotEmpty() &&
-                age.isNotEmpty() &&
-                ilness.isNotEmpty() &&
-                weight.isNotEmpty() &&
-                !pulsado
-            ) {
-
-                pulsado = true
-                val generatedId: String? = db_ref.child("Pets").push().key
-
-                GlobalScope.launch {
-                    val pet: Pet
-                    if (url_photo != null) {
-                        val urlPhotoFirebase = Utilities.savePetPhoto(
-                            url_photo!!,
-                            "Pets",
-                            FirebaseAuth.getInstance().currentUser!!.uid,
-                            generatedId!!
-                        )
-                        pet = Pet(
-                            generatedId!!,
-                            name,
-                            type,
-                            breed,
-                            age,
-                            ilness,
-                            vaccines,
-                            weight,
-                            owner,
-                            urlPhotoFirebase
-                        )
-                    } else {
-                        pet = Pet(
-                            generatedId!!,
-                            name,
-                            type,
-                            breed,
-                            age,
-                            ilness,
-                            vaccines,
-                            weight,
-                            owner
-                        )
-                    }
-
-                    Utilities.createPet(pet, db_ref)
-
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Mascota guardada con éxito",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        navController.navigate(R.id.action_clientAddPetFragment_to_clientPetFragment)
-                    }
+                if (vaccines.isBlank()) {
+                    vaccines = "No tiene vacunas"
                 }
-            } else {
-                Toast.makeText(requireContext(), "Faltan datos", Toast.LENGTH_SHORT).show()
-            }
+
+                if (
+                    name.isNotEmpty() &&
+                    type.isNotEmpty() &&
+                    breed.isNotEmpty() &&
+                    age.isNotEmpty() &&
+                    ilness.isNotEmpty() &&
+                    weight.isNotEmpty() &&
+                    !pulsado
+                ) {
+
+                    pulsado = true
+                    val generatedId: String? = db_ref.child("Pets").push().key
+
+                    GlobalScope.launch {
+                        val pet: Pet
+                        if (url_photo != null) {
+                            val urlPhotoFirebase = Utilities.savePetPhoto(
+                                url_photo!!,
+                                "Pets",
+                                FirebaseAuth.getInstance().currentUser!!.uid,
+                                generatedId!!
+                            )
+                            pet = Pet(
+                                generatedId!!,
+                                name,
+                                type,
+                                breed,
+                                age,
+                                ilness,
+                                vaccines,
+                                weight,
+                                owner,
+                                urlPhotoFirebase
+                            )
+                        } else {
+                            pet = Pet(
+                                generatedId!!,
+                                name,
+                                type,
+                                breed,
+                                age,
+                                ilness,
+                                vaccines,
+                                weight,
+                                owner
+                            )
+                        }
+
+                        Utilities.createPet(pet, db_ref)
+
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Mascota guardada con éxito",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            navController.navigate(R.id.action_clientAddPetFragment_to_clientPetFragment)
+                        }
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Faltan datos", Toast.LENGTH_SHORT).show()
+                }
+            })
         }
 
         photo.setOnClickListener {
-            galeryAcces.launch("image/*")
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                galeryAcces.launch("image/*")
+            })
         }
 
         return view

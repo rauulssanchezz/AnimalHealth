@@ -94,40 +94,45 @@ class VetClinicFragment : Fragment() {
             })
 
         buttonSave.setOnClickListener {
-            GlobalScope.launch {
-                var url_photo_firebase = String()
-                if (nameEdit.text.toString() == name && url_photo == null && addressEdit.text.toString() == location && phoneEdit.text.toString() == phone && postalCodeEdit.text.toString() == postalCode) {
-                    GlobalScope.launch(Dispatchers.Main) {
-                        Toast.makeText(
-                            requireContext(),
-                            "No se han realizado cambios",
-                            Toast.LENGTH_SHORT
-                        ).show()
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                GlobalScope.launch {
+                    var url_photo_firebase = String()
+                    if (nameEdit.text.toString() == name && url_photo == null && addressEdit.text.toString() == location && phoneEdit.text.toString() == phone && postalCodeEdit.text.toString() == postalCode) {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            Toast.makeText(
+                                requireContext(),
+                                "No se han realizado cambios",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        return@launch
                     }
-                    return@launch
+                    if (url_photo == null) {
+                        url_photo_firebase = url_img
+                    } else {
+                        url_photo_firebase =
+                            Utilities.savePhoto(url_photo!!, "Clinics", clinic!!.id)
+                    }
+
+                    clinic?.name = nameEdit.text.toString()
+                    clinic?.photo = url_photo_firebase
+                    clinic?.phone = phoneEdit.text.toString()
+
+                    Utilities.createClinic(clinic!!, dbRef)
+
+                    GlobalScope.launch(Dispatchers.Main) {
+
+                        Toast.makeText(requireContext(), "Cambios guardados", Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
-                if (url_photo == null) {
-                    url_photo_firebase = url_img
-                } else {
-                    url_photo_firebase =
-                        Utilities.savePhoto(url_photo!!, "Clinics", clinic!!.id)
-                }
-
-                clinic?.name = nameEdit.text.toString()
-                clinic?.photo = url_photo_firebase
-                clinic?.phone = phoneEdit.text.toString()
-
-                Utilities.createClinic(clinic!!, dbRef)
-
-                GlobalScope.launch(Dispatchers.Main) {
-
-                    Toast.makeText(requireContext(), "Cambios guardados", Toast.LENGTH_SHORT).show()
-                }
-            }
+            })
         }
 
         photo.setOnClickListener {
-            galeryAcces.launch("image/*")
+            Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
+                galeryAcces.launch("image/*")
+            })
         }
 
         return view
