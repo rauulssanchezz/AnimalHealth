@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RatingBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatButton
@@ -49,6 +50,7 @@ class VetClinicFragment : Fragment() {
         var phoneEdit = view.findViewById<TextInputEditText>(R.id.editTextPhone)
         var postalCodeEdit = view.findViewById<TextInputEditText>(R.id.editTextPostalCode)
         val buttonSave = view.findViewById<AppCompatButton>(R.id.buttonSave)
+        val ratingBar = view.findViewById<RatingBar>(R.id.clinicRate)
 
         var name = ""
         var location = ""
@@ -75,6 +77,7 @@ class VetClinicFragment : Fragment() {
                             addressEdit.setText(location)
                             phoneEdit.setText(phone)
                             postalCodeEdit.setText(postalCode)
+                            ratingBar.rating = clinic?.rate!!
 
                             Glide.with(requireActivity())
                                 .load(beforeUrl_img)

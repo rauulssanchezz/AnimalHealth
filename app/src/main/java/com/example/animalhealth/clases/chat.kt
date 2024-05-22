@@ -9,4 +9,5 @@ data class Chat(
     var idDestinatario:String = "",
     var nombreDestinatario:String = "",
     var fotoDestinatario:String = "",
+    val not_state: Int? = null,
 ): Parcelable

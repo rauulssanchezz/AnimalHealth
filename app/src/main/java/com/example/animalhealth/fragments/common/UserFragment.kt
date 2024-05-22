@@ -17,15 +17,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat.recreate
-import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.animalhealth.R
-import com.example.animalhealth.activities.LoginActivity
-import com.example.animalhealth.clases.User
+import com.example.animalhealth.activities.common.LoginActivity
 import com.example.animalhealth.clases.Utilities
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope

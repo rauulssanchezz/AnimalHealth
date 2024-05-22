@@ -1,4 +1,4 @@
-package com.example.animalhealth.activities
+package com.example.animalhealth.activities.common
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

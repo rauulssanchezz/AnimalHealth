@@ -1,6 +1,5 @@
 package com.example.animalhealth.activities.client
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,13 +8,11 @@ import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.animalhealth.R
-import com.example.animalhealth.adapters.ClinicAdapter
 import com.example.animalhealth.adapters.ReviewsAdapter
 import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.Reviews

@@ -1,4 +1,5 @@
 package com.example.animalhealth.activities.common
+
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
@@ -11,10 +12,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.animalhealth.R
-import com.example.animalhealth.activities.VetMainActivity
 import com.example.animalhealth.activities.client.ClientMainActivity
+import com.example.animalhealth.activities.vet.VetMainActivity
 import com.example.animalhealth.adapters.MensajeAdaptador
 import com.example.animalhealth.clases.Chat
+import com.example.animalhealth.clases.Estado
 import com.example.animalhealth.clases.Mensaje
 import com.example.animalhealth.clases.User
 import com.google.firebase.auth.FirebaseAuth
@@ -96,14 +98,14 @@ class MensajeActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 var chat = getChat(db_ref, userId)
                 if (chat == null) {
-                    var id_chat = userId
+                    val id_chat = userId
                     val user = getUser(userId)
-                    var nuevo_chat = Chat(id_chat, userId, user!!.name,user.img)
+                    val nuevo_chat = Chat(id_chat, userId, user!!.name, user.img)
                     db_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Chats").child(nuevo_chat.id).setValue(nuevo_chat).await()
 
-                    id_chat = FirebaseAuth.getInstance().currentUser!!.uid
-                    nuevo_chat = Chat(id_chat, FirebaseAuth.getInstance().currentUser!!.uid, userActual!!.name,userActual!!.img)
-                    db_ref.child("Users").child(userId).child("Chats").child(nuevo_chat.id).setValue(nuevo_chat).await()
+                    val id_chat_opuesto = FirebaseAuth.getInstance().currentUser!!.uid
+                    val nuevo_chat_opuesto = Chat(id_chat_opuesto, id_chat_opuesto, userActual!!.name, userActual!!.img)
+                    db_ref.child("Users").child(userId).child("Chats").child(nuevo_chat_opuesto.id).setValue(nuevo_chat_opuesto).await()
                     chat = getChat(db_ref, userId)
                 }
                 val id_mensaje = db_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Chats").child(chat!!.id).child("Mensajes").push().key!!
@@ -118,6 +120,7 @@ class MensajeActivity : AppCompatActivity() {
                 )
                 db_ref.child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Chats").child(userId).child("Mensajes").child(id_mensaje).setValue(nuevo_mensaje)
                 db_ref.child("Users").child(userId).child("Chats").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Mensajes").child(id_mensaje).setValue(nuevo_mensaje)
+                db_ref.child("Users").child(userId).child("Chats").child(FirebaseAuth.getInstance().currentUser!!.uid).child("not_state").setValue(Estado.CREADO)
             }
         }
         mensaje_enviado.setText("")
@@ -249,6 +252,7 @@ class MensajeActivity : AppCompatActivity() {
         }
     }
 }
+
 
 
 

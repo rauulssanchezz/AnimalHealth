@@ -8,15 +8,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import com.example.animalhealth.R
-import com.example.animalhealth.activities.VetMainActivity
 import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.Utilities
 import com.google.firebase.Firebase

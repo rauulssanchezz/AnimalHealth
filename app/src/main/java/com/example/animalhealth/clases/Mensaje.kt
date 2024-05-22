@@ -11,5 +11,5 @@ data class Mensaje(
     var id_receptor: String? = null,
     var imagen_emisor: String? = null,
     val contenido: String? = null,
-    val fecha_hora: String? = null
+    val fecha_hora: String? = null,
 ) : Parcelable

@@ -11,22 +11,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.animalhealth.R
 import com.example.animalhealth.activities.client.ClientMainActivity
-import com.example.animalhealth.activities.VetMainActivity
+import com.example.animalhealth.activities.vet.VetMainActivity
 import com.example.animalhealth.activities.vet.VetAddClinicActivity
 import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.User
 import com.example.animalhealth.clases.Utilities
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 

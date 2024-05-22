@@ -150,7 +150,6 @@ class ClientAddBookingFragment : Fragment() {
 
         return view
     }
-
     private fun loadBookingsForDate(
         dbReference: DatabaseReference,
         clinicId: String,

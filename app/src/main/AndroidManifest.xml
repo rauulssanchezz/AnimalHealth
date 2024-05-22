@@ -30,10 +30,10 @@
             android:name=".activities.client.ClientMainActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.VetMainActivity"
+            android:name=".activities.vet.VetMainActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".activities.common.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
