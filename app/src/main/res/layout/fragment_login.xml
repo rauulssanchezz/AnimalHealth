@@ -81,13 +81,4 @@
         android:layout_marginTop="16dp"
         android:text="No tienes cuenta aún? Regístrate o inicia sesión con:"
         />
-
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/buttonLoginGoogle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/textViewRegisterOrLoginWith"
-        app:layout_constraintStart_toStartOf="@id/buttonLogin"
-        app:layout_constraintEnd_toEndOf="@id/buttonLogin"
-        android:layout_marginTop="16dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
