@@ -35,8 +35,6 @@ class LoginFragment : Fragment(){
         }
         var pulsado = false
         val buttonLogin=view.findViewById<TextView>(R.id.buttonLogin)
-        val signInButton = view.findViewById<SignInButton>(R.id.buttonLoginGoogle)
-        signInButton.setSize(SignInButton.SIZE_WIDE) // Puedes ajustar el tamaño del botón según tus necesidades
 
         val emailEditText = view.findViewById<TextView>(R.id.editTextEmail)
         val passwordEditText = view.findViewById<TextView>(R.id.editTextPassword)

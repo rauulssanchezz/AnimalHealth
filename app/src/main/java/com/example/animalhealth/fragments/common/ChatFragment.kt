@@ -49,7 +49,7 @@ private lateinit var adapter : chatAdapter
                     if (chat?.id != "") {
                         chat_list.add(chat!!)
                     }
-                    Log.d("CHAT1", chat.toString())
+                    Log.d("CHAT", chat.toString())
                 }
                 recycler.adapter?.notifyDataSetChanged()
             }
