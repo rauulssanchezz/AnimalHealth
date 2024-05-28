@@ -48,7 +48,6 @@ class VetClinicFragment : Fragment() {
         val nameEdit = view.findViewById<TextInputEditText>(R.id.editTextName)
         var addressEdit = view.findViewById<TextInputEditText>(R.id.editTextStreet)
         var phoneEdit = view.findViewById<TextInputEditText>(R.id.editTextPhone)
-        var postalCodeEdit = view.findViewById<TextInputEditText>(R.id.editTextPostalCode)
         val buttonSave = view.findViewById<AppCompatButton>(R.id.buttonSave)
         val ratingBar = view.findViewById<RatingBar>(R.id.clinicRate)
 
@@ -70,13 +69,11 @@ class VetClinicFragment : Fragment() {
                             name = clinic?.name.toString()
                             location = clinic?.location.toString()
                             phone = clinic?.phone.toString()
-                            postalCode = clinic?.postalCode.toString()
                             url_img = beforeUrl_img
 
                             nameEdit.setText(name)
                             addressEdit.setText(location)
                             phoneEdit.setText(phone)
-                            postalCodeEdit.setText(postalCode)
                             ratingBar.rating = clinic?.rate!!
 
                             Glide.with(requireActivity())
@@ -97,7 +94,7 @@ class VetClinicFragment : Fragment() {
             Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
                 GlobalScope.launch {
                     var url_photo_firebase = String()
-                    if (nameEdit.text.toString() == name && url_photo == null && addressEdit.text.toString() == location && phoneEdit.text.toString() == phone && postalCodeEdit.text.toString() == postalCode) {
+                    if (nameEdit.text.toString() == name && url_photo == null && addressEdit.text.toString() == location && phoneEdit.text.toString() == phone) {
                         GlobalScope.launch(Dispatchers.Main) {
                             Toast.makeText(
                                 requireContext(),
