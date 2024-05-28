@@ -58,8 +58,6 @@ private var startHour = ""
         var reason = ""
         val navController = findNavController()
         val clinicId = sharedPreferences.getString("clinicId", "").toString()
-        var vet = User()
-        var block = false
         var pet = Pet()
         val actualUser = FirebaseAuth.getInstance().currentUser?.uid.toString()
         var user = User()
@@ -68,37 +66,10 @@ private var startHour = ""
         val petSelectedSpinner = view.findViewById<Spinner>(R.id.bookingPetSpinner)
 
         val ocupatedHours = mutableListOf<String>()
-        var bookingList = mutableListOf<Booking>()
 
         val date = Calendar.getInstance()
         val actualDate = "${date.get(Calendar.DAY_OF_MONTH)}/${date.get(Calendar.MONTH) + 1}/${date.get(Calendar.YEAR)}"
 
-        dbReference.child("Clinics").get().addOnSuccessListener { clinicsSnapshot ->
-            clinicsSnapshot.children.forEach { clinicSnapshot ->
-                val clinic = clinicSnapshot.getValue(Clinic::class.java)
-                if (clinic?.id == clinicId) {
-                    val vetId = clinic.vetId
-                    dbReference.child("Users").child(vetId).child("Blocks").get().addOnSuccessListener { blocksSnapshot ->
-                        val blocks = blocksSnapshot.getValue(Blocks::class.java)
-                        if (blocks?.id == user.id) {
-                            // El usuario está bloqueado
-                            block = true
-                            Toast.makeText(context, "No puedes reservar en esta clínica porque has sido bloqueado", Toast.LENGTH_LONG).show()
-                            navController.navigate(R.id.action_clientAddBookingFragment_to_clientClinicsFragment)
-                        } else {
-                            // El usuario no está bloqueado
-                            block = false
-                        }
-                    }
-                }
-            }
-        }
-
-
-        if (block){
-            Toast.makeText(context, "No puedes reservar en esta clinica porque has sido bloqueado", Toast.LENGTH_LONG).show()
-            navController.navigate(R.id.action_clientAddBookingFragment_to_clientClinicsFragment)
-        }
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val selectedDate = "$dayOfMonth/${month + 1}/$year"
             if (actualDate >= selectedDate) {

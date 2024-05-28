@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide
 import com.example.animalhealth.R
 import com.example.animalhealth.activities.client.ClientClinicInfoActivity
 import com.example.animalhealth.activities.common.MensajeActivity
+import com.example.animalhealth.clases.Blocks
 import com.example.animalhealth.clases.Clinic
 import com.example.animalhealth.clases.User
 import com.example.animalhealth.clases.Utilities
@@ -38,6 +39,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resumeWithException
 
 
@@ -48,12 +50,15 @@ class ClinicAdapter(private val clinic_list: MutableList<Clinic>) : RecyclerView
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var navController: NavController
     private val adapterScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private lateinit var dbReference: DatabaseReference
+    private var block = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClinicViewHolder {
         val item_view = LayoutInflater.from(parent.context).inflate(R.layout.item_clinic, parent, false)
         context = parent.context
         sharedPreferences = context.getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
         navController = Navigation.findNavController(parent)
+        dbReference = FirebaseDatabase.getInstance().reference
         return ClinicViewHolder(item_view)
     }
 
@@ -79,16 +84,70 @@ class ClinicAdapter(private val clinic_list: MutableList<Clinic>) : RecyclerView
 
         holder.chatButton.setOnClickListener {
             Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
-                var intent = Intent(context, MensajeActivity::class.java)
-                intent.putExtra("userId", actual_item.vetId)
-                context.startActivity(intent)
+                dbReference.child("Clinics").get().addOnSuccessListener { clinicsSnapshot ->
+                    clinicsSnapshot.children.forEach { clinicSnapshot ->
+                        val clinic = clinicSnapshot.getValue(Clinic::class.java)
+                        if (clinic?.id == actual_item.id) {
+                            val vetId = clinic.vetId
+                            dbReference.child("Users").child(vetId).child("Blocks").get()
+                                .addOnSuccessListener { blocksSnapshot ->
+                                    val blocks = blocksSnapshot.getValue(Blocks::class.java)
+                                    if (blocks?.id == FirebaseAuth.getInstance().currentUser!!.uid) {
+                                        // El usuario está bloqueado
+                                        block = true
+                                        Toast.makeText(
+                                            context,
+                                            "No puedes reservar en esta clínica porque has sido bloqueado",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                        navController.navigate(R.id.action_clientAddBookingFragment_to_clientClinicsFragment)
+                                    } else {
+                                        // El usuario no está bloqueado
+                                        block = false
+                                    }
+                                }
+                        }
+                    }
+                    }
+                    if (block){
+                        Toast.makeText(context, "No puedes reservar en esta clinica porque has sido bloqueado", Toast.LENGTH_LONG).show()
+                    }else {
+                        var intent = Intent(context, MensajeActivity::class.java)
+                        intent.putExtra("userId", actual_item.vetId)
+                        context.startActivity(intent)
+                    }
             })
         }
 
         holder.booking.setOnClickListener {
             Utilities.animation(it, 0.95f, 1.0f, 100,Runnable {
-                navController.navigate(R.id.action_clientClinicsFragment_to_clientBookingFragment)
-                sharedPreferences.edit().putString("clinicId", actual_item.id).apply()
+                dbReference.child("Clinics").get().addOnSuccessListener { clinicsSnapshot ->
+                    clinicsSnapshot.children.forEach { clinicSnapshot ->
+                        val clinic = clinicSnapshot.getValue(Clinic::class.java)
+                        if (clinic?.id == actual_item.id) {
+                            val vetId = clinic.vetId
+                            dbReference.child("Users").child(vetId).child("Blocks").get().addOnSuccessListener { blocksSnapshot ->
+                                val blocks = blocksSnapshot.getValue(Blocks::class.java)
+                                if (blocks?.id == FirebaseAuth.getInstance().currentUser!!.uid) {
+                                    // El usuario está bloqueado
+                                    block = true
+                                    Toast.makeText(context, "No puedes reservar en esta clínica porque has sido bloqueado", Toast.LENGTH_LONG).show()
+                                    navController.navigate(R.id.action_clientAddBookingFragment_to_clientClinicsFragment)
+                                } else {
+                                    // El usuario no está bloqueado
+                                    block = false
+                                }
+                            }
+                        }
+                    }
+                    if (block){
+                        Toast.makeText(context, "No puedes reservar en esta clinica porque has sido bloqueado", Toast.LENGTH_LONG).show()
+                    }else {
+                        navController.navigate(R.id.action_clientClinicsFragment_to_clientBookingFragment)
+                        sharedPreferences.edit().putString("clinicId", actual_item.id).apply()
+                    }
+                }
+
             })
         }
 

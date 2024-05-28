@@ -31,13 +31,11 @@ private lateinit var adapter : chatAdapter
 
         dbRef.child("Users").child("ChatPublico").get().addOnSuccessListener {
             if (it.exists()) {
-                for (i in it.children) {
-                    val chat = i.getValue(Chat::class.java)
+                    val chat = it.getValue(Chat::class.java)
                     if (chat?.id != "") {
                         chat_list.add(chat!!)
                     }
                     Log.d("CHAT1", chat.toString())
-                }
                 recycler.adapter?.notifyDataSetChanged()
             }
         }
