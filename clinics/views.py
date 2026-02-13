@@ -3,7 +3,7 @@ from .models import Clinic
 from .serializers import ClinicSerializer
 from .permissions import IsVeterinary, IsClinicAdmin
 
-class CreateClinicView(viewsets.ModelViewSet):
+class ClinicView(viewsets.ModelViewSet):
     queryset = Clinic.objects.all()
     serializer_class = ClinicSerializer
 
