@@ -7,7 +7,6 @@ class Clinic(models.Model):
         default=uuid.uuid4, 
         editable=False
     )
-    email = models.EmailField(unique=True)
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=500)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
