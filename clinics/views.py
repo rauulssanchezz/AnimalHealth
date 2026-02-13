@@ -1,19 +1,20 @@
-from rest_framework import status, permissions
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import permissions, viewsets
+from .models import Clinic
 from .serializers import ClinicSerializer
+from .permissions import IsVeterinary, IsClinicAdmin
 
-class CreateClinicView(APIView):
-    permission_classes=[permissions.AllowAny]
+class CreateClinicView(viewsets.ModelViewSet):
+    queryset = Clinic.objects.all()
+    serializer_class = ClinicSerializer
 
-    def post(self, request):
-        serializer = ClinicSerializer(data=request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                {"message": "Clínica creada con éxito", "data": serializer.data}, 
-                status=status.HTTP_201_CREATED
-            )
+    def get_permissions(self):
+        if self.action == 'create':
+            return [IsVeterinary()]
         
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            return [IsClinicAdmin()]
+        
+        return [permissions.AllowAny()]
+
+    def perform_create(self, serializer):
+        serializer.save()
