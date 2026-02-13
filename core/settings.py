@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary',
     'users',
-    'clinics'
+    'clinics',
+    'chats'
 ]
 
 REST_FRAMEWORK = {
