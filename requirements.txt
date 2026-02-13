@@ -6,3 +6,4 @@ django-environ
 Pillow
 cloudinary
 django-cloudinary-storage
+geopy
