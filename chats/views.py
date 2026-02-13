@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions
 from django.db import models
 from .models import Chat
 
-class CreateChatView(viewsets.ViewSet):
+class ChatView(viewsets.ViewSet):
     permission_classes=[permissions.IsAuthenticated]
 
     def get_queryset(self):
