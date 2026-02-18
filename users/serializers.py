@@ -49,7 +49,6 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop(PASSWORD)
-        is_vet = validated_data[IS_VET]
         WORKS_AT = validated_data[WORKS_AT]
         
         return User.objects.create_user(password=password, **validated_data)
