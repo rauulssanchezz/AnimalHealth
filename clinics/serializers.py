@@ -77,3 +77,20 @@ class ClinicSerializer(serializers.ModelSerializer):
             ClinicImage.objects.create(clinic=clinic, image=image)
 
         return clinic
+    
+    def validate(self, data):
+        new_images = data.get(UPLOADED_IMAGES, [])
+        
+        existing_images_count = 0
+        if self.instance:
+            existing_images_count = self.instance.images.count()
+        
+        total_images = existing_images_count + len(new_images)
+        
+        if total_images > 5:
+            raise serializers.ValidationError({
+                UPLOADED_IMAGES: f"Límite excedido. Una clínica no puede tener más de 5 imágenes. "
+                                 f"Actualmente tiene {existing_images_count} e intentas subir {len(new_images)}."
+            })
+
+        return data
