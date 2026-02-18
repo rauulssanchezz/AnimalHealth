@@ -14,5 +14,5 @@ class IsClinicAdmin(permissions.BasePermission):
             request.user and 
             request.user.is_authenticated and 
             request.user.clinic_admin and 
-            request.user.clinic == obj
+            request.user == obj.admin
         )

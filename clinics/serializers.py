@@ -1,6 +1,7 @@
 from geopy.geocoders import Nominatim
 from rest_framework import serializers
 from clinics.models import Clinic, ClinicImage
+from rates.serializers import RatesSerializer
 
 EMAIL = 'email'
 NAME = 'name'
@@ -9,13 +10,25 @@ LATITUDE = 'latitude'
 LONGITUDE = 'longitude'
 CLINIC = 'clinic'
 UPLOADED_IMAGES = 'uploaded_images'
+ADMIN = 'admin'
+EMAIL = 'email'
+IMAGES = 'images'
+ID = 'id'
+RATE_MEDIA = 'rate_media'
 
 geolocator = Nominatim(user_agent="animal_health")
 
+class ClinicImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClinicImage
+        fields = ['image', 'created_at', ID]
+
 class ClinicSerializer(serializers.ModelSerializer):
 
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    admin = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    rate_media = serializers.FloatField(read_only=True)
 
+    images = ClinicImageSerializer(many=True, read_only=True)
     uploaded_images = serializers.ListField(
         child=serializers.ImageField(max_length=1000000, allow_empty_file=False, use_url=False),
         write_only=True,
@@ -24,11 +37,11 @@ class ClinicSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Clinic
-        fields = [EMAIL, NAME, ADDRESS, UPLOADED_IMAGES]
-        read_only_fields = [LATITUDE, LONGITUDE]
+        fields = [ID, EMAIL, NAME, ADDRESS, UPLOADED_IMAGES, ADMIN, IMAGES, LATITUDE, LONGITUDE, RATE_MEDIA]
+        read_only_fields = [LATITUDE, LONGITUDE, EMAIL, ID]
 
     def create(self, validated_data):
-        user = validated_data.pop('user')
+        user = validated_data.pop('admin')
         
         if not getattr(user, 'is_vet', False):
             raise serializers.ValidationError(
@@ -52,10 +65,11 @@ class ClinicSerializer(serializers.ModelSerializer):
         
         validated_data[LATITUDE] = location.latitude
         validated_data[LONGITUDE] = location.longitude
+        validated_data[ADMIN] = user
+        validated_data[EMAIL] = user.email
 
         clinic = Clinic.objects.create(**validated_data)
 
-        user.clinic = clinic
         user.clinic_admin = True
         user.save()
 

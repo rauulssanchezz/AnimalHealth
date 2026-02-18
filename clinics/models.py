@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from users.models import User
 
 class Clinic(models.Model):
     id = models.UUIDField(
@@ -11,6 +12,8 @@ class Clinic(models.Model):
     address = models.CharField(max_length=500)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    admin = models.ForeignKey(User, related_name='clinic', on_delete=models.CASCADE)
+    email = models.EmailField()
 
     def __str__(self):
         return self.name
