@@ -22,6 +22,7 @@ Permite crear una nueva cuenta en el sistema.
 | `password` | String | Contraseña (Solo escritura). |
 | `is_vet` | Boolean | `true` si es veterinario, `false` si es cliente. |
 | `clinic_admin` | Boolean | Define si gestiona una clínica. |
+| `works_at` | Boolean | Donde trabaja si es veterianrio. |
 
 **Respuesta Exitosa (201 Created):**
 ```json
@@ -117,6 +118,21 @@ Permite a un usuario autenticado eliminar permanentemente su cuenta y todos los 
 # 🏥 Documentación de API: Clínicas y Reseñas
 
 Este documento detalla los endpoints para la gestión de centros veterinarios y el sistema de feedback de usuarios.
+
+### 6. Consultar perfil (GET)
+Hay dos opciones o un veterinario consulta el perfil de un user
+
+* **URL:** `'api/users/<uuid:pk>/'`
+* **Método:** `GET`
+* **Permiso:** `IsAuthenticated` IsVetAndOnlyViewClients
+* **Header:** `Authorization: Token <tu_token>`
+
+O un clinic_admin consulta/modifica/borra/crea los veterianrios de su clinica 
+
+* **URL:** `'api/vets/'`
+* **Método:** `GET / POST / PUT / PATCH / DELETE`
+* **Permiso:** `IsAuthenticated` IsClinicAdminOfObject
+* **Header:** `Authorization: Token <tu_token>`
 
 ---
 
