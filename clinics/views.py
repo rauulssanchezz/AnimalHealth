@@ -2,7 +2,7 @@ from requests import Response
 from rest_framework import permissions, viewsets, filters
 from .models import Clinic
 from .serializers import ClinicSerializer
-from .permissions import IsVeterinary, IsClinicAdmin
+from .permissions import IsClinicAdmin, IsClinicAdminOfObject
 from django.db.models import Avg, FloatField, ExpressionWrapper, F
 from django.db.models.functions import Coalesce, Round, Cos, ACos, Radians, Sin
 from rest_framework.decorators import action
@@ -13,10 +13,10 @@ class ClinicViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'create':
-            return [IsVeterinary()]
+            return [IsClinicAdmin()]
         
         elif self.action in ['update', 'partial_update', 'destroy']:
-            return [IsClinicAdmin()]
+            return [IsClinicAdminOfObject()]
         
         return [permissions.AllowAny()]
 

@@ -1,7 +1,6 @@
 from geopy.geocoders import Nominatim
 from rest_framework import serializers
 from clinics.models import Clinic, ClinicImage
-from rates.serializers import RatesSerializer
 
 EMAIL = 'email'
 NAME = 'name'
@@ -43,10 +42,6 @@ class ClinicSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = validated_data.pop('admin')
         
-        if not getattr(user, 'is_vet', False):
-            raise serializers.ValidationError(
-                {"detail": "Solo los usuarios con perfil veterinario pueden registrar clínicas."}
-            )
         address = validated_data[ADDRESS]
         location = geolocator.geocode(address)
         images_data = validated_data.pop(UPLOADED_IMAGES, [])
@@ -70,7 +65,7 @@ class ClinicSerializer(serializers.ModelSerializer):
 
         clinic = Clinic.objects.create(**validated_data)
 
-        user.clinic_admin = True
+        user.works_at = clinic
         user.save()
 
         for image in images_data:
@@ -80,6 +75,17 @@ class ClinicSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
         new_images = data.get(UPLOADED_IMAGES, [])
+        user = data.get('admin')
+        
+        if not getattr(user, 'is_vet', False):
+            raise serializers.ValidationError(
+                {"detail": "Solo los usuarios con perfil veterinario pueden registrar clínicas."}
+            )
+
+        if getattr(user, 'works_at', None):
+            raise serializers.ValidationError(
+                {"detail": "Solo se puede tener una clinica asignada por usuario."}
+            )
         
         existing_images_count = 0
         if self.instance:
