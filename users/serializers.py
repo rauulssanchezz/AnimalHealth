@@ -35,9 +35,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         is_vet = data.get(IS_VET, False)
-        works_at = data.get(WORKS_AT)
+        works_at = data.get(WORKS_AT, '')
+        clinic_admin = data.get(CLINIC_ADMIN, False)
 
-        if is_vet and not works_at:
+        if is_vet and not works_at and not clinic_admin:
             raise serializers.ValidationError({
                 WORKS_AT: "Los usuarios marcados como veterinarios deben estar asociados a una clínica."
             })
@@ -49,7 +50,6 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop(PASSWORD)
-        WORKS_AT = validated_data[WORKS_AT]
         
         return User.objects.create_user(password=password, **validated_data)
     
