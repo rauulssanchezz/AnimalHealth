@@ -8,6 +8,13 @@ class User(AbstractUser):
     username = models.CharField(max_length=150, unique=False, blank=True, null=True)
     is_vet = models.BooleanField(default=False, blank=True, null=False)
     clinic_admin=models.BooleanField(default=False, blank=True, null=False)
+    works_at = models.ForeignKey(
+        'clinics.Clinic', 
+        related_name='veterinarians', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True
+    )
 
     USERNAME_FIELD = 'email'
 

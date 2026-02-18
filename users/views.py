@@ -1,7 +1,10 @@
-from rest_framework import generics, status, permissions
+from rest_framework import generics, status, permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import RegisterSerializer
+
+from users.models import User
+from users.permissions import IsClinicAdminOfObject, IsVetAndOnlyViewClients
+from .serializers import RegisterSerializer, UserPublicSerializer, VetPublicSerializer
 
 class RegisterView(APIView):
     permission_classes=[permissions.AllowAny]
@@ -15,20 +18,24 @@ class RegisterView(APIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class UserProfileView(generics.RetrieveUpdateAPIView):
+class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
     
-    def delete(self, request):
-        user = request.user
-        user.delete()
-        return Response(
-            {"message": "Usuario eliminado correctamente"}, 
-            status=status.HTTP_204_NO_CONTENT
-        )
+class UserInformationView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserPublicSerializer
+    permission_classes = [permissions.IsAuthenticated, IsVetAndOnlyViewClients]
+
+class VetViewSet(viewsets.ModelViewSet):
+    serializer_class = VetPublicSerializer
+    permission_classes = [permissions.IsAuthenticated, IsClinicAdminOfObject]
+
+    def get_queryset(self):
+        return User.objects.filter(works_at__admin=self.request.user)
     
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
