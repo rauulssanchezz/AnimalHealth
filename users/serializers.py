@@ -14,13 +14,13 @@ class UserPublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [EMAIL, USERNAME]
-        read_only = [EMAIL, USERNAME]
+        read_only_fields= [EMAIL, USERNAME]
 
 class VetPublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [IS_VET, CLINIC_ADMIN, WORKS_AT]
-        read_only = [IS_VET, CLINIC_ADMIN, WORKS_AT]
+        read_only_fields= [IS_VET, CLINIC_ADMIN, WORKS_AT]
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only = True)
