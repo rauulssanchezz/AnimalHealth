@@ -15,6 +15,7 @@ class User(AbstractUser):
         null=True, 
         blank=True
     )
+    image = models.ImageField(upload_to='users/', null=True)
 
     USERNAME_FIELD = 'email'
 

@@ -3,31 +3,33 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+ID = 'id'
 EMAIL = 'email'
 USERNAME = 'username'
 PASSWORD = 'password'
 IS_VET = 'is_vet'
 CLINIC_ADMIN = 'clinic_admin'
 WORKS_AT = 'works_at'
+IMAGE = 'image'
 
 class UserPublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = [EMAIL, USERNAME]
-        read_only_fields= [EMAIL, USERNAME]
+        fields = [ID, EMAIL, USERNAME, IMAGE]
+        read_only_fields= [ID, EMAIL, USERNAME, IMAGE]
 
 class VetPublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = [IS_VET, CLINIC_ADMIN, WORKS_AT]
-        read_only_fields= [IS_VET, CLINIC_ADMIN, WORKS_AT]
+        fields = [ID, IS_VET, CLINIC_ADMIN, WORKS_AT, IMAGE]
+        read_only_fields= [ID, IS_VET, CLINIC_ADMIN, WORKS_AT, IMAGE]
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only = True)
 
     class Meta:
         model = User
-        fields = [EMAIL, USERNAME, PASSWORD, IS_VET, CLINIC_ADMIN, WORKS_AT]
+        fields = [EMAIL, USERNAME, PASSWORD, IS_VET, CLINIC_ADMIN, WORKS_AT, IMAGE]
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'required': True}
