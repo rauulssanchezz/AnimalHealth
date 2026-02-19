@@ -6,10 +6,15 @@ from .permissions import IsClinicAdmin, IsClinicAdminOfObject
 from django.db.models import Avg, FloatField, ExpressionWrapper, F
 from django.db.models.functions import Coalesce, Round, Cos, ACos, Radians, Sin
 from rest_framework.decorators import action
+from django_filters.rest_framework import DjangoFilterBackend
 
 class ClinicViewSet(viewsets.ModelViewSet):
     serializer_class = ClinicSerializer
     queryset = Clinic.objects.all()
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['name', 'address']
+    search_fields = ['name', 'address']
 
     def get_permissions(self):
         if self.action == 'create':
@@ -28,13 +33,14 @@ class ClinicViewSet(viewsets.ModelViewSet):
             rate_media=Round(Coalesce(Avg('rates__rate'), 0.0), 1)
         ).order_by('-rate_media')
 
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name']
-
     @action(detail=False, methods=['get'])
     def nearby(self, request):
-        lat = request.query_params.get('latitude')
-        lon = request.query_params.get('longitude')
+        lat = request.query_params.get('latitude', None)
+        lon = request.query_params.get('longitude', None)
+
+        if lat == None or lon == None:
+            return queryset
+
         dist_max = request.query_params.get('distance', 10)
 
         if not lat or not lon:
