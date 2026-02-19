@@ -1,7 +1,7 @@
 from rest_framework import generics, status, permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from django_filters.rest_framework import DjangoFilterBackend
 from users.models import User
 from users.permissions import IsClinicAdminOfObject, IsVetAndOnlyViewClients
 from .serializers import RegisterSerializer, UserPublicSerializer, VetPublicSerializer
@@ -30,12 +30,18 @@ class UserInformationView(generics.RetrieveAPIView):
     serializer_class = UserPublicSerializer
     permission_classes = [permissions.IsAuthenticated, IsVetAndOnlyViewClients]
 
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['username', 'email']
+
 class VetViewSet(viewsets.ModelViewSet):
     serializer_class = VetPublicSerializer
     permission_classes = [permissions.IsAuthenticated, IsClinicAdminOfObject]
 
     def get_queryset(self):
         return User.objects.filter(works_at__admin=self.request.user)
+    
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['username', 'email', 'clinic']
     
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
