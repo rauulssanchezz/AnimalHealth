@@ -6,7 +6,6 @@ from pets.permissions import IsOwnerOrVet, IsVet
 from django_filters.rest_framework import DjangoFilterBackend
 
 class PetViewSet(viewsets.ModelViewSet):
-    queryset = Pet.objects.all()
     serializer_class = PetBaseSerializer
     permission_classes = IsAuthenticated, IsOwnerOrVet
 

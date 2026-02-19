@@ -10,8 +10,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 class ClinicViewSet(viewsets.ModelViewSet):
     serializer_class = ClinicSerializer
-    queryset = Clinic.objects.all()
-
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['name', 'address']
     search_fields = ['name', 'address']
