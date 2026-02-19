@@ -5,12 +5,14 @@ from clinics.views import ClinicViewSet
 from rest_framework.authtoken import views as auth_views
 from rest_framework.routers import DefaultRouter
 from rates.views import RateViewSet
+from pets.views import PetViewSet
 
 router = DefaultRouter()
 
 router.register(r'clinics', ClinicViewSet, basename='clinic')
 router.register(r'rates', RateViewSet, basename='rate')
 router.register(r'vets', VetViewSet, basename='vets')
+router.register(r'pets', PetViewSet, basename='pets')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

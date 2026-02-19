@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'users',
     'clinics',
     'rates',
-    'django_filters'
+    'django_filters',
+    'pets'
 ]
 
 REST_FRAMEWORK = {
